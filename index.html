@@ -125,10 +125,11 @@ body { font-size: 15px; line-height: 1.5; }
   max-height: 360px; overflow-y: auto; border: 1px solid var(--line);
   border-radius: 6px; padding: 8px;
 }
-.checkbox-list label { display: block; padding: 6px 4px; cursor: pointer; word-break: keep-all; line-height: 1.6; }
+.checkbox-list label { display: block !important; padding: 6px 4px; cursor: pointer; word-break: keep-all; line-height: 1.7; }
 .checkbox-list label:hover { background: #f7f8fa; }
-.checkbox-list label > input[type="checkbox"] { margin-right: 8px; vertical-align: middle; }
-.checkbox-list label .tag { vertical-align: middle; }
+.checkbox-list label > input[type="checkbox"] { margin-right: 8px; vertical-align: middle; transform: translateY(-1px); }
+.checkbox-list label .tag { vertical-align: middle; margin-left: 4px; }
+.checkbox-list label > b, .checkbox-list label > span { vertical-align: middle; }
 .modal-bg {
   position: fixed; inset: 0; background: rgba(0,0,0,0.45);
   z-index: 1000; display: flex; align-items: center; justify-content: center;
@@ -362,6 +363,8 @@ body { font-size: 15px; line-height: 1.5; }
       <div class="name" id="scan-result-name"></div>
       <div class="msg" id="scan-result-msg"></div>
     </div>
+
+    <div id="scan-debug" style="position:fixed;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,0.8);color:#fff;padding:6px 10px;font-size:12px;z-index:20;border-radius:4px;font-family:monospace;text-align:center">대기 중…</div>
   </div>
 </div>
 
@@ -977,7 +980,7 @@ function startQrReader() {
   const reader = new Html5Qrcode('qr-reader');
   state.scan.html5 = reader;
   state.scan.running = true;
-  const config = { fps: 10, qrbox: { width: 280, height: 280 } };
+  const config = { fps: 15, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 };
 
   // 후면 카메라 → 전면 카메라 → 첫 번째 사용 가능 카메라 순서로 시도
   reader.start({ facingMode: { exact: 'environment' } }, config, onScanSuccess, () => {})
@@ -987,6 +990,7 @@ function startQrReader() {
       if (!devices || devices.length === 0) throw new Error('사용 가능한 카메라가 없습니다.');
       return reader.start(devices[0].id, config, onScanSuccess, () => {});
     }))
+    .then(() => { console.log('[ipsi-signbook] 카메라 시작 완료'); scanDebug('카메라 ON · QR 대기 중'); })
     .catch(err => {
       state.scan.running = false;
       alert('카메라 시작 실패: ' + (err && err.message || err) +
@@ -1007,6 +1011,8 @@ function scanStop() {
 }
 
 function onScanSuccess(decoded) {
+  console.log('[ipsi-signbook] QR 인식:', decoded);
+  scanDebug('인식: ' + decoded);
   if (!state.scan.running) return;
   const now = Date.now();
   if (now - state.scan.lastScanAt < 3500) return; // 쿨다운
@@ -1014,12 +1020,21 @@ function onScanSuccess(decoded) {
   scanLookup(decoded);
 }
 
+function scanDebug(msg) {
+  const el = document.getElementById('scan-debug');
+  if (el) el.textContent = msg;
+}
+
 function scanLookup(key) {
+  scanDebug('서버 조회 중: ' + key);
   callApi('lookup', { eventId: state.scan.eventId, date: state.scan.date, key: key }).then(res => {
+    scanDebug('응답: ' + JSON.stringify(res).substring(0, 80));
     if (!res.ok) return showScanResult('err', '오류', res.error || '조회 실패');
     if (res.alreadyChecked) return showScanResult('warn', res.member.name, '이미 체크인 완료');
     state.scan.currentMember = res.member;
     openScanSign(res.member);
+  }).catch(err => {
+    scanDebug('네트워크 오류: ' + (err && err.message || err));
   });
 }
 
@@ -1162,7 +1177,7 @@ function renderMemberGroupCheckboxes(checked) {
   }
   wrap.innerHTML = state.groups.map(g => {
     const c = (checked || []).indexOf(g.name) >= 0 ? 'checked' : '';
-    return `<label><input type="checkbox" class="m-group-chk" value="${escapeHtml(g.name)}" ${c}> ${escapeHtml(g.name)}</label>`;
+    return `<label style="display:block;padding:6px 4px;cursor:pointer"><input type="checkbox" class="m-group-chk" value="${escapeHtml(g.name)}" ${c} style="vertical-align:middle;margin-right:8px"><span style="vertical-align:middle">${escapeHtml(g.name)}</span></label>`;
   }).join('');
 }
 
@@ -1433,14 +1448,13 @@ function renderExpectedList(checked) {
     if (filterGroup && (m.groups || []).indexOf(filterGroup) < 0) return false;
     return true;
   });
-  let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
-    <input type="checkbox" id="ev-check-all" onchange="evToggleAll(this.checked)"> <b>전체 선택 (필터 결과)</b>
+  let html = `<label style="display:block;padding:6px 4px;border-bottom:1px solid var(--line);padding-bottom:6px;cursor:pointer">
+    <input type="checkbox" id="ev-check-all" onchange="evToggleAll(this.checked)" style="vertical-align:middle;margin-right:8px"><b style="vertical-align:middle">전체 선택 (필터 결과)</b>
   </label>`;
   candidates.forEach(m => {
     const c = checked[m.memberId] ? 'checked' : '';
-    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="margin-left:4px;font-size:10px">${escapeHtml(g)}</span>`).join('');
-    html += `<label><input type="checkbox" class="ev-mid" value="${m.memberId}" ${c}>
-      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}${m.position ? ' · ' + escapeHtml(m.position) : ''}</span>${groupTags}</label>`;
+    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="vertical-align:middle;margin-left:4px;font-size:10px">${escapeHtml(g)}</span>`).join('');
+    html += `<label style="display:block;padding:6px 4px;cursor:pointer"><input type="checkbox" class="ev-mid" value="${m.memberId}" ${c} style="vertical-align:middle;margin-right:8px"><span style="vertical-align:middle">${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}${m.position ? ' · ' + escapeHtml(m.position) : ''}</span>${groupTags}</span></label>`;
   });
   wrap.innerHTML = html;
   document.getElementById('ev-expected-count').textContent = `후보 ${candidates.length}명`;
@@ -1749,13 +1763,12 @@ function renderQrTargetList() {
     if (filterGroup && (m.groups || []).indexOf(filterGroup) < 0) return false;
     return true;
   });
-  let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
-    <input type="checkbox" id="qr-check-all" onchange="qrToggleAll(this.checked)"> <b>전체 선택 (필터 결과 ${candidates.length}명)</b>
+  let html = `<label style="display:block;padding:6px 4px;border-bottom:1px solid var(--line);padding-bottom:6px;cursor:pointer">
+    <input type="checkbox" id="qr-check-all" onchange="qrToggleAll(this.checked)" style="vertical-align:middle;margin-right:8px"><b style="vertical-align:middle">전체 선택 (필터 결과 ${candidates.length}명)</b>
   </label>`;
   candidates.forEach(m => {
-    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="margin-left:4px;font-size:10px">${escapeHtml(g)}</span>`).join('');
-    html += `<label><input type="checkbox" class="qr-mid" value="${m.memberId}">
-      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')} · ${escapeHtml(m.email || '메일없음')}</span>${groupTags}</label>`;
+    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="vertical-align:middle;margin-left:4px;font-size:10px">${escapeHtml(g)}</span>`).join('');
+    html += `<label style="display:block;padding:6px 4px;cursor:pointer"><input type="checkbox" class="qr-mid" value="${m.memberId}" style="vertical-align:middle;margin-right:8px"><span style="vertical-align:middle">${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')} · ${escapeHtml(m.email || '메일없음')}</span>${groupTags}</span></label>`;
   });
   wrap.innerHTML = html;
 }
@@ -1856,12 +1869,11 @@ function printLogin() {
 }
 function renderPrintTargets() {
   const wrap = document.getElementById('print-target-list');
-  let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
-    <input type="checkbox" id="print-check-all" onchange="printToggleAll(this.checked)"> <b>전체 선택</b>
+  let html = `<label style="display:block;padding:6px 4px;border-bottom:1px solid var(--line);padding-bottom:6px;cursor:pointer">
+    <input type="checkbox" id="print-check-all" onchange="printToggleAll(this.checked)" style="vertical-align:middle;margin-right:8px"><b style="vertical-align:middle">전체 선택</b>
   </label>`;
   state.roster.filter(m => m.active).forEach(m => {
-    html += `<label><input type="checkbox" class="print-mid" value="${m.memberId}">
-      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}</span></label>`;
+    html += `<label style="display:block;padding:6px 4px;cursor:pointer"><input type="checkbox" class="print-mid" value="${m.memberId}" style="vertical-align:middle;margin-right:8px"><span style="vertical-align:middle">${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}</span></span></label>`;
   });
   wrap.innerHTML = html;
 }
