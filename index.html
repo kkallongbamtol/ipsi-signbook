@@ -125,8 +125,10 @@ body { font-size: 15px; line-height: 1.5; }
   max-height: 360px; overflow-y: auto; border: 1px solid var(--line);
   border-radius: 6px; padding: 8px;
 }
-.checkbox-list label { display: flex; align-items: center; padding: 6px 4px; gap: 8px; word-break: keep-all; flex-wrap: wrap; }
+.checkbox-list label { display: block; padding: 6px 4px; cursor: pointer; word-break: keep-all; line-height: 1.6; }
 .checkbox-list label:hover { background: #f7f8fa; }
+.checkbox-list label > input[type="checkbox"] { margin-right: 8px; vertical-align: middle; }
+.checkbox-list label .tag { vertical-align: middle; }
 .modal-bg {
   position: fixed; inset: 0; background: rgba(0,0,0,0.45);
   z-index: 1000; display: flex; align-items: center; justify-content: center;
@@ -968,17 +970,30 @@ function scanStart() {
 }
 
 function startQrReader() {
+  if (typeof Html5Qrcode === 'undefined') {
+    alert('QR 라이브러리가 로드되지 않았습니다. 인터넷 연결을 확인하고 강제 새로고침(Ctrl+Shift+R) 해주세요.');
+    return;
+  }
   const reader = new Html5Qrcode('qr-reader');
   state.scan.html5 = reader;
-  reader.start(
-    { facingMode: 'environment' },
-    { fps: 10, qrbox: { width: 280, height: 280 } },
-    onScanSuccess,
-    () => {}
-  ).catch(err => {
-    alert('카메라 시작 실패: ' + err);
-  });
   state.scan.running = true;
+  const config = { fps: 10, qrbox: { width: 280, height: 280 } };
+
+  // 후면 카메라 → 전면 카메라 → 첫 번째 사용 가능 카메라 순서로 시도
+  reader.start({ facingMode: { exact: 'environment' } }, config, onScanSuccess, () => {})
+    .catch(() => reader.start({ facingMode: 'environment' }, config, onScanSuccess, () => {}))
+    .catch(() => reader.start({ facingMode: 'user' }, config, onScanSuccess, () => {}))
+    .catch(() => Html5Qrcode.getCameras().then(devices => {
+      if (!devices || devices.length === 0) throw new Error('사용 가능한 카메라가 없습니다.');
+      return reader.start(devices[0].id, config, onScanSuccess, () => {});
+    }))
+    .catch(err => {
+      state.scan.running = false;
+      alert('카메라 시작 실패: ' + (err && err.message || err) +
+            '\n\n· iPad/스마트폰에서 열어 주세요. PC라면 외장 웹캠이 필요합니다.' +
+            '\n· 주소표시줄의 카메라 권한을 허용해 주세요.' +
+            '\n· HTTPS(github.io 주소)로 접속해 주세요.');
+    });
 }
 
 function scanStop() {
