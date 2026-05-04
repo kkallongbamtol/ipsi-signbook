@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>가천대 입학사정관실 서명부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+:root {
+  --gachon-navy: #002855;
+  --gachon-navy-dark: #001838;
+  --gachon-gold: #c9a961;
+  --gachon-gold-light: #e6cf8e;
+  --bg: #f5f6f8;
+  --surface: #fff;
+  --line: #dfe2e7;
+  --line-strong: #b8bdc6;
+  --text: #1f2329;
+  --text-muted: #6b7280;
+  --error: #c0392b;
+  --success: #2e7d32;
+  --warn: #c9890b;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: 'IBM Plex Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+body { font-size: 15px; line-height: 1.5; }
+.serif { font-family: 'Gowun Batang', serif; }
+.app { max-width: 720px; margin: 0 auto; padding: 16px; }
+.app-wide { max-width: 1280px; margin: 0 auto; padding: 16px; }
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; margin-bottom: 16px;
+  background: var(--gachon-navy); color: #fff;
+  border-radius: 8px;
+}
+.header h1 { font-family: 'Gowun Batang', serif; margin: 0; font-size: 20px; font-weight: 700; }
+.header .sub { color: var(--gachon-gold-light); font-size: 13px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.card h2 { margin: 0 0 12px; font-size: 17px; color: var(--gachon-navy); }
+.field { display: block; margin-bottom: 12px; }
+.field label { display:block; font-size:13px; color: var(--text-muted); margin-bottom: 4px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px; font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--gachon-gold); outline-offset: -1px; }
+.field-row { display:flex; gap:8px; }
+.field-row > * { flex: 1; }
+.btn {
+  display: inline-block; padding: 11px 18px;
+  border: 0; border-radius: 6px; cursor: pointer;
+  font-family: inherit; font-size: 15px; font-weight: 600;
+  background: var(--gachon-navy); color: #fff;
+  transition: background 0.12s;
+}
+.btn:hover { background: var(--gachon-navy-dark); }
+.btn:disabled { background: #b0b6c0; cursor: not-allowed; }
+.btn-gold { background: var(--gachon-gold); color: #fff; }
+.btn-gold:hover { background: #b3954f; }
+.btn-ghost { background: #fff; color: var(--gachon-navy); border: 1px solid var(--line-strong); }
+.btn-ghost:hover { background: #f0f2f6; }
+.btn-danger { background: var(--error); color: #fff; }
+.btn-danger:hover { background: #962b1f; }
+.btn-sm { padding: 6px 10px; font-size: 13px; }
+.btn-block { display: block; width: 100%; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.alert { padding: 10px 12px; border-radius: 6px; margin-bottom: 10px; font-size: 14px; }
+.alert-info { background: #e8f0fa; color: #0a3a73; border: 1px solid #b9d0ee; }
+.alert-warn { background: #fff5dd; color: #6b4a07; border: 1px solid #f0d585; }
+.alert-error { background: #fbe9e7; color: #6f1c10; border: 1px solid #f0aaa1; }
+.alert-success { background: #e8f4ea; color: #1a4a1c; border: 1px solid #a8d5af; }
+.muted { color: var(--text-muted); font-size: 13px; }
+.tag {
+  display:inline-block; padding: 2px 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; vertical-align: middle;
+}
+.tag-active { background: #e8f4ea; color: #1a4a1c; }
+.tag-inactive { background: #f0f0f0; color: #666; }
+.tag-status-예정 { background: #e8f0fa; color: #0a3a73; }
+.tag-status-진행중 { background: #fff5dd; color: #6b4a07; }
+.tag-status-종료 { background: #f0f0f0; color: #666; }
+.row { display:flex; gap: 12px; flex-wrap: wrap; }
+.col { flex: 1; min-width: 200px; }
+.tabs { display:flex; gap: 0; border-bottom: 2px solid var(--line); margin-bottom: 14px; flex-wrap: wrap; }
+.tab {
+  padding: 10px 18px; cursor: pointer;
+  font-weight: 600; color: var(--text-muted);
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+}
+.tab.active { color: var(--gachon-navy); border-bottom-color: var(--gachon-gold); }
+.data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.data-table th { background: #f7f8fa; color: var(--text-muted); font-weight: 600; }
+.data-table tr:hover { background: #fafbfd; }
+.signature-canvas {
+  width: 100%; max-width: 480px; height: 200px;
+  border: 2px dashed var(--line-strong); border-radius: 8px;
+  background: #fff; touch-action: none; display: block;
+}
+.signature-canvas.has-sign { border-style: solid; border-color: var(--gachon-gold); }
+.checkbox-list {
+  max-height: 360px; overflow-y: auto; border: 1px solid var(--line);
+  border-radius: 6px; padding: 8px;
+}
+.checkbox-list label { display: flex; align-items: center; padding: 6px 4px; gap: 8px; }
+.checkbox-list label:hover { background: #f7f8fa; }
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: #fff; border-radius: 10px; padding: 22px;
+  max-width: 560px; width: 100%; max-height: 90vh; overflow: auto;
+}
+.modal h3 { margin: 0 0 14px; color: var(--gachon-navy); font-size: 18px; }
+.hidden { display: none !important; }
+
+/* 셀프 체크인 결과 */
+.checkin-result {
+  text-align: center; padding: 30px 16px;
+}
+.checkin-result.success { background: #e8f4ea; border: 2px solid var(--success); border-radius: 12px; }
+.checkin-result.error { background: #fbe9e7; border: 2px solid var(--error); border-radius: 12px; }
+.checkin-result h2 { margin: 0 0 8px; font-size: 26px; }
+.checkin-result .name { font-size: 22px; font-weight: 700; }
+.checkin-result .time { color: var(--text-muted); margin-top: 4px; font-size: 14px; }
+
+/* iPad 스캔 풀스크린 */
+.scan-mode { background: #000; min-height: 100vh; }
+.scan-camera { width: 100vw; height: 60vh; background: #000; position: relative; }
+#qr-reader { width: 100%; height: 100%; }
+#qr-reader video { width: 100% !important; height: 100% !important; object-fit: cover; }
+.scan-info-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 10px 14px; background: rgba(0,40,85,0.92); color: #fff;
+  display: flex; justify-content: space-between; align-items: center; z-index: 5;
+  font-size: 14px;
+}
+.scan-info-bar .right { display:flex; gap: 8px; }
+.scan-result-overlay {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; text-align: center; padding: 24px;
+}
+.scan-result-overlay .name { font-size: 56px; font-weight: 700; margin-bottom: 12px; font-family: 'Gowun Batang', serif; }
+.scan-result-overlay .msg { font-size: 22px; }
+.scan-result-overlay.ok { background: var(--success); }
+.scan-result-overlay.err { background: var(--error); }
+.scan-result-overlay.warn { background: var(--warn); }
+
+/* QR 카드 출력 */
+@page { size: A4; margin: 12mm; }
+.print-page {
+  width: 186mm; min-height: 273mm; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6mm;
+  page-break-after: always;
+}
+.qr-card {
+  width: 90mm; height: 130mm;
+  border: 2px solid var(--gachon-navy);
+  border-radius: 4mm; padding: 6mm;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  background: #fff; break-inside: avoid;
+}
+.qr-card .head {
+  font-size: 10pt; color: var(--gachon-navy); font-weight: 700;
+  border-bottom: 1pt solid var(--gachon-gold); padding-bottom: 2mm; width: 100%;
+  margin-bottom: 4mm;
+}
+.qr-card .qr { width: 60mm; height: 60mm; margin: 4mm 0; }
+.qr-card .qr svg, .qr-card .qr img { width: 100%; height: 100%; }
+.qr-card .name { font-size: 16pt; font-weight: 700; margin-top: 2mm; font-family: 'Gowun Batang', serif; }
+.qr-card .dept { font-size: 9pt; color: #444; margin-top: 1mm; }
+.qr-card .id { font-size: 8pt; color: #888; margin-top: auto; }
+
+/* A4 서명부 */
+.signbook-page {
+  background: #fff; padding: 14mm 12mm; box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  margin: 12px auto;
+}
+.signbook-page.portrait { width: 210mm; min-height: 297mm; }
+.signbook-page.landscape { width: 297mm; min-height: 210mm; }
+.signbook-head { display:flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8mm; }
+.signbook-head .logo { max-height: 14mm; }
+.signbook-head .title { text-align: center; flex: 1; }
+.signbook-head .title h1 { font-family: 'Gowun Batang', serif; font-size: 18pt; margin: 0; font-weight: 700; }
+.signbook-head .title .subtitle { font-size: 10pt; color: #555; margin-top: 2mm; }
+.signbook-head .badge { font-size: 11pt; font-weight: 700; padding: 4mm 6mm; border: 1pt solid #333; }
+.signbook-table { width: 100%; border-collapse: collapse; font-size: 11pt; }
+.signbook-table th, .signbook-table td {
+  border: 1.2pt solid #222; text-align: center; padding: 2mm 3mm;
+}
+.signbook-table th { background: #f0f2f6; font-weight: 700; }
+.signbook-table .col-no { width: 14mm; }
+.signbook-table .col-name { width: 30mm; }
+.signbook-table .col-dept { width: 50mm; }
+.signbook-table .col-position { width: 28mm; }
+.signbook-table .col-remark { width: 28mm; }
+.signbook-table td.sign-cell { padding: 1mm; }
+.signbook-table td.sign-cell img { max-height: 100%; max-width: 100%; }
+
+@media print {
+  body { background: #fff !important; }
+  .no-print { display: none !important; }
+  .signbook-page { box-shadow: none !important; margin: 0 !important; padding: 8mm 8mm !important; page-break-after: always; }
+  .print-page { page-break-after: always; }
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+  .field-row { flex-direction: column; }
+  .data-table { font-size: 12px; }
+  .data-table th, .data-table td { padding: 6px 6px; }
+  .header h1 { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     #checkin — 셀프 체크인 (행사 선택 → 본인인증 → 서명)
+============================================================ -->
+<div id="app-checkin" class="app hidden">
+  <div class="header">
+    <div>
+      <h1>출석 체크 · 서명</h1>
+      <div class="sub">가천대학교 입학사정관실</div>
+    </div>
+  </div>
+
+  <div id="ck-step-event" class="card">
+    <h2>1. 행사 선택</h2>
+    <div id="ck-event-list" class="muted">행사 목록을 불러오는 중…</div>
+  </div>
+
+  <div id="ck-step-auth" class="card hidden">
+    <h2>2. 본인 인증</h2>
+    <div class="muted" style="margin-bottom:10px">선택한 행사: <span id="ck-event-summary"></span></div>
+    <div class="field">
+      <label>위원ID 또는 휴대폰 번호 11자리</label>
+      <input id="ck-key" type="text" inputmode="search" autocomplete="off" placeholder="M001 또는 01012345678">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-block" onclick="ckLookup()">다음</button>
+      <button class="btn btn-ghost btn-sm" onclick="ckBackToEvent()">행사 다시 선택</button>
+    </div>
+    <div id="ck-auth-msg"></div>
+  </div>
+
+  <div id="ck-step-sign" class="card hidden">
+    <h2>3. 서명</h2>
+    <div class="alert alert-info" id="ck-member-info"></div>
+    <canvas id="ck-canvas" class="signature-canvas" width="900" height="360"></canvas>
+    <div class="btn-row" style="margin-top: 10px">
+      <button class="btn btn-ghost btn-sm" onclick="ckClearSign()">지우기</button>
+      <button class="btn btn-gold" onclick="ckSubmit()">제출</button>
+      <button class="btn btn-ghost btn-sm" onclick="ckBackToAuth()">뒤로</button>
+    </div>
+    <div id="ck-sign-msg" style="margin-top: 10px"></div>
+  </div>
+
+  <div id="ck-step-done" class="hidden">
+    <div class="checkin-result success">
+      <h2>✓ 출석 완료</h2>
+      <div class="name" id="ck-done-name"></div>
+      <div class="time" id="ck-done-time"></div>
+      <div style="margin-top:14px;font-size:13px;color:var(--text-muted)">3초 후 처음으로 돌아갑니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     #scan — iPad QR 스캔
+============================================================ -->
+<div id="app-scan" class="hidden scan-mode">
+  <div id="scan-setup" class="app" style="background:#fff; min-height: 100vh;">
+    <div class="header">
+      <div>
+        <h1>iPad QR 스캔</h1>
+        <div class="sub">행사 / 날짜를 먼저 선택해 주세요</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label>행사</label>
+        <select id="scan-event-select" onchange="scanOnEventChange()"><option value="">— 선택 —</option></select>
+      </div>
+      <div class="field">
+        <label>날짜</label>
+        <select id="scan-date-select"><option value="">— 행사 먼저 선택 —</option></select>
+      </div>
+      <button class="btn btn-block btn-gold" onclick="scanStart()">스캔 시작</button>
+    </div>
+  </div>
+
+  <div id="scan-running" class="hidden">
+    <div class="scan-info-bar">
+      <div id="scan-info-event">행사 / 날짜</div>
+      <div class="right">
+        <button class="btn btn-ghost btn-sm" onclick="scanOpenManual()">번호 입력</button>
+        <button class="btn btn-ghost btn-sm" onclick="scanStop()">종료</button>
+      </div>
+    </div>
+    <div class="scan-camera"><div id="qr-reader"></div></div>
+
+    <div id="scan-sign-modal" class="modal-bg hidden">
+      <div class="modal">
+        <h3>서명</h3>
+        <div class="alert alert-info" id="scan-member-info"></div>
+        <canvas id="scan-canvas" class="signature-canvas" width="900" height="360"></canvas>
+        <div class="btn-row" style="margin-top: 10px">
+          <button class="btn btn-ghost btn-sm" onclick="scanClearSign()">지우기</button>
+          <button class="btn btn-gold" onclick="scanSubmitSign()">제출</button>
+          <button class="btn btn-ghost btn-sm" onclick="scanCancelSign()">취소</button>
+        </div>
+        <div id="scan-sign-msg" style="margin-top: 10px"></div>
+      </div>
+    </div>
+
+    <div id="scan-manual-modal" class="modal-bg hidden">
+      <div class="modal">
+        <h3>휴대폰 번호로 체크인</h3>
+        <div class="field">
+          <label>휴대폰 번호 11자리</label>
+          <input id="scan-manual-phone" inputmode="numeric" maxlength="11" placeholder="01012345678">
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="scanManualLookup()">조회</button>
+          <button class="btn btn-ghost" onclick="scanCloseManual()">취소</button>
+        </div>
+        <div id="scan-manual-msg" style="margin-top: 10px"></div>
+      </div>
+    </div>
+
+    <div id="scan-result-overlay" class="scan-result-overlay hidden">
+      <div class="name" id="scan-result-name"></div>
+      <div class="msg" id="scan-result-msg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     #admin — 관리자 화면
+============================================================ -->
+<div id="app-admin" class="app-wide hidden">
+  <div class="header">
+    <div>
+      <h1>관리자 — 서명부 시스템</h1>
+      <div class="sub">가천대학교 입학사정관실</div>
+    </div>
+    <div>
+      <button class="btn btn-ghost btn-sm" onclick="adminLogout()">로그아웃</button>
+    </div>
+  </div>
+
+  <div id="admin-login" class="card" style="max-width: 420px; margin: 30px auto;">
+    <h2>관리자 로그인</h2>
+    <div class="field">
+      <label>비밀번호</label>
+      <input id="admin-pw" type="password" autocomplete="current-password">
+    </div>
+    <button class="btn btn-block" onclick="adminLogin()">로그인</button>
+    <div id="admin-login-msg" style="margin-top: 10px"></div>
+  </div>
+
+  <div id="admin-content" class="hidden">
+    <div class="tabs">
+      <div class="tab active" data-tab="roster" onclick="adminTab('roster')">마스터 명단</div>
+      <div class="tab" data-tab="event" onclick="adminTab('event')">행사 관리</div>
+      <div class="tab" data-tab="attend" onclick="adminTab('attend')">출석 현황</div>
+      <div class="tab" data-tab="signbook" onclick="adminTab('signbook')">서명부 출력</div>
+      <div class="tab" data-tab="qr" onclick="adminTab('qr')">QR 카드 발송</div>
+    </div>
+
+    <!-- 탭: 마스터 명단 -->
+    <div id="admin-tab-roster" class="admin-tab">
+      <div class="card">
+        <div class="row" style="align-items:center">
+          <input id="roster-search" placeholder="이름·소속·연락처 검색" oninput="renderRoster()" style="flex:1; padding:8px 12px; border:1px solid var(--line-strong); border-radius:6px">
+          <button class="btn btn-sm" onclick="openMember()">+ 추가</button>
+          <button class="btn btn-ghost btn-sm" onclick="openBulkImport()">엑셀 일괄 업로드</button>
+          <button class="btn btn-ghost btn-sm" onclick="assignAllTokens()">위원ID 일괄 부여</button>
+        </div>
+      </div>
+      <div class="card">
+        <div id="roster-table-wrap"></div>
+      </div>
+    </div>
+
+    <!-- 탭: 행사 관리 -->
+    <div id="admin-tab-event" class="admin-tab hidden">
+      <div class="card">
+        <div class="btn-row">
+          <button class="btn" onclick="openEvent()">+ 행사 생성</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadEvents()">새로고침</button>
+        </div>
+      </div>
+      <div class="card">
+        <div id="event-list-wrap"></div>
+      </div>
+    </div>
+
+    <!-- 탭: 출석 현황 -->
+    <div id="admin-tab-attend" class="admin-tab hidden">
+      <div class="card">
+        <div class="row">
+          <div class="col">
+            <label class="muted">행사</label>
+            <select id="attend-event" onchange="attendOnEventChange()"><option value="">— 선택 —</option></select>
+          </div>
+          <div class="col">
+            <label class="muted">날짜</label>
+            <select id="attend-date" onchange="loadAttendance()"><option value="">— 행사 먼저 선택 —</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div id="attend-summary" class="muted">행사·날짜를 선택하세요.</div>
+        <div id="attend-tables" style="margin-top: 12px"></div>
+      </div>
+    </div>
+
+    <!-- 탭: 서명부 출력 -->
+    <div id="admin-tab-signbook" class="admin-tab hidden">
+      <div class="card no-print">
+        <div class="row">
+          <div class="col">
+            <label class="muted">행사</label>
+            <select id="sb-event" onchange="sbOnEventChange()"><option value="">— 선택 —</option></select>
+          </div>
+          <div class="col">
+            <label class="muted">날짜 (전체 또는 단일)</label>
+            <select id="sb-date"><option value="">— 행사 먼저 선택 —</option></select>
+          </div>
+          <div class="col">
+            <label class="muted">출력 모드</label>
+            <select id="sb-mode">
+              <option value="actual">실제 출석자만</option>
+              <option value="expected">참석 예정자 전체 (서명 없음 = 빈칸)</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top: 8px">
+          <button class="btn" onclick="sbPreview()">미리보기 생성</button>
+          <button class="btn btn-gold" onclick="window.print()">인쇄 / PDF 저장</button>
+        </div>
+      </div>
+      <div id="sb-preview"></div>
+    </div>
+
+    <!-- 탭: QR 카드 발송 -->
+    <div id="admin-tab-qr" class="admin-tab hidden">
+      <div class="card">
+        <h2>QR 카드 일괄 메일 발송</h2>
+        <div class="field">
+          <label>행사 (옵션 — 본문에 행사명·일정 포함)</label>
+          <select id="qr-event"><option value="">— 선택 안함 —</option></select>
+        </div>
+        <div class="field">
+          <label>제목 (비워두면 자동)</label>
+          <input id="qr-subject" placeholder="[가천대 입학사정관실] ○○ QR 카드">
+        </div>
+        <div class="field">
+          <label>본문 (비워두면 기본 템플릿 / {{name}}, {{eventName}}, {{dates}} 사용 가능)</label>
+          <textarea id="qr-body" rows="6" placeholder="비워두면 기본 안내문 사용"></textarea>
+        </div>
+        <div class="field">
+          <label>대상 위원 (체크 시 선택자만, 미체크 시 활성 전원)</label>
+          <div id="qr-target-list" class="checkbox-list"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-gold" onclick="sendQrEmailNow()">메일 발송</button>
+          <button class="btn btn-ghost btn-sm" onclick="goPrintQr()">QR 카드 인쇄 페이지 열기</button>
+        </div>
+        <div id="qr-send-msg" style="margin-top: 10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 모달들 (관리자 공용) -->
+  <div id="modal-member" class="modal-bg hidden">
+    <div class="modal">
+      <h3 id="modal-member-title">위원 추가</h3>
+      <input type="hidden" id="m-rowIndex">
+      <div class="field"><label>위원ID (비우면 자동)</label><input id="m-id" placeholder="M001"></div>
+      <div class="field"><label>이름 *</label><input id="m-name"></div>
+      <div class="field"><label>소속</label><input id="m-dept"></div>
+      <div class="field"><label>직책 (교수·학장·처장 등)</label><input id="m-position"></div>
+      <div class="field"><label>휴대폰 11자리</label><input id="m-phone" inputmode="numeric" maxlength="13"></div>
+      <div class="field"><label>이메일</label><input id="m-email" type="email"></div>
+      <div class="field"><label>비고</label><input id="m-remark"></div>
+      <div class="btn-row">
+        <button class="btn" onclick="saveMember()">저장</button>
+        <button class="btn btn-ghost" onclick="closeMember()">취소</button>
+      </div>
+      <div id="modal-member-msg" style="margin-top: 10px"></div>
+    </div>
+  </div>
+
+  <div id="modal-bulk" class="modal-bg hidden">
+    <div class="modal">
+      <h3>엑셀 일괄 업로드</h3>
+      <div class="muted" style="margin-bottom:10px">
+        엑셀에서 <b>이름·소속·직책·연락처·이메일·비고</b> 6개 컬럼을 <b>그대로 복사</b>하여 아래 칸에 붙여 넣으세요.<br>
+        같은 이름+연락처가 이미 있으면 덮어쓰고, 없으면 새로 추가합니다.
+      </div>
+      <textarea id="bulk-text" rows="10" style="width:100%; font-family: monospace; font-size: 13px" placeholder="이름&#9;소속&#9;직책&#9;연락처&#9;이메일&#9;비고"></textarea>
+      <div class="btn-row" style="margin-top: 10px">
+        <button class="btn" onclick="submitBulk()">업로드</button>
+        <button class="btn btn-ghost" onclick="closeBulk()">취소</button>
+      </div>
+      <div id="bulk-msg" style="margin-top: 10px"></div>
+    </div>
+  </div>
+
+  <div id="modal-event" class="modal-bg hidden">
+    <div class="modal" style="max-width: 720px">
+      <h3 id="modal-event-title">행사 생성</h3>
+      <input type="hidden" id="ev-rowIndex">
+      <input type="hidden" id="ev-id">
+      <div class="row">
+        <div class="col"><div class="field"><label>행사명 *</label><input id="ev-name" placeholder="2026학년도 학생부종합전형 의예과 서류검토 서명부"></div></div>
+        <div class="col"><div class="field"><label>부제 (옵션)</label><input id="ev-subtitle" placeholder="특별전형"></div></div>
+      </div>
+      <div class="field">
+        <label>날짜 (여러 개, 쉼표 또는 줄바꿈으로 구분 — yyyy-MM-dd)</label>
+        <textarea id="ev-dates" rows="3" placeholder="2026-10-03, 2026-10-04"></textarea>
+      </div>
+      <div class="field">
+        <label>참석 예정자 선택</label>
+        <div id="ev-expected-list" class="checkbox-list"></div>
+      </div>
+      <div class="card" style="background: #f7f8fa; border:1px solid var(--line); margin-top: 10px">
+        <h2 style="font-size: 15px">양식 옵션</h2>
+        <div class="row">
+          <div class="col"><div class="field"><label>용지 방향</label>
+            <select id="ev-orientation"><option value="portrait">세로 (Portrait)</option><option value="landscape">가로 (Landscape)</option></select>
+          </div></div>
+          <div class="col"><div class="field"><label>컬럼 순서</label>
+            <select id="ev-cols">
+              <option value="no,name,dept">NO · 성명 · 소속 (+ 날짜)</option>
+              <option value="no,dept,name">NO · 소속 · 성명 (+ 날짜)</option>
+            </select>
+          </div></div>
+        </div>
+        <div class="row">
+          <div class="col"><label><input type="checkbox" id="ev-show-position"> 직책 컬럼 표시</label></div>
+          <div class="col"><label><input type="checkbox" id="ev-show-remark"> 비고 컬럼 표시</label></div>
+        </div>
+        <div class="field">
+          <label>가천대 로고 (옵션) — 이미지 파일 선택</label>
+          <input id="ev-logo-file" type="file" accept="image/*">
+          <div id="ev-logo-preview" style="margin-top: 8px"></div>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top: 12px">
+        <button class="btn" onclick="saveEvent()">저장</button>
+        <button class="btn btn-ghost" onclick="closeEvent()">취소</button>
+      </div>
+      <div id="modal-event-msg" style="margin-top: 10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     #print — QR 카드 일괄 인쇄
+============================================================ -->
+<div id="app-print" class="hidden">
+  <div id="print-login" class="app">
+    <div class="header"><div><h1>QR 카드 인쇄</h1><div class="sub">관리자 비밀번호 필요</div></div></div>
+    <div class="card" style="max-width: 420px">
+      <div class="field"><label>비밀번호</label><input id="print-pw" type="password"></div>
+      <button class="btn btn-block" onclick="printLogin()">로그인</button>
+      <div id="print-login-msg" style="margin-top: 10px"></div>
+    </div>
+  </div>
+  <div id="print-content" class="hidden">
+    <div class="app no-print">
+      <div class="header"><div><h1>QR 카드 인쇄</h1></div></div>
+      <div class="card">
+        <div class="field"><label>대상 (체크된 위원만, 미체크 시 활성 전원)</label>
+          <div id="print-target-list" class="checkbox-list"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-gold" onclick="renderPrintCards()">미리보기 생성</button>
+          <button class="btn" onclick="window.print()">인쇄 / PDF 저장</button>
+        </div>
+      </div>
+    </div>
+    <div id="print-pages"></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// 설정 — 운영자가 직접 수정
+// ================================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3EBm0IUPu8f2E8WXZwu_LDCRXzajC5HGRjBmUJ3A-Bc2hXE42ArQg96tYDdQxudV8/exec';
+
+// ================================================================
+// 전역 상태
+// ================================================================
+const state = {
+  mode: '',
+  adminPw: '',
+  printPw: '',
+  events: [],          // 활성 행사 (체크인용)
+  eventsAdmin: [],     // 전체 행사 (관리자용)
+  roster: [],          // 마스터
+  // 셀프 체크인
+  ck: { eventId: '', date: '', member: null, signed: false },
+  // iPad 스캔
+  scan: { eventId: '', date: '', running: false, lastScanAt: 0, currentMember: null, html5: null },
+  // 행사 모달
+  evModal: { editing: null, logoBase64: '' },
+  // 관리자
+  attend: { eventId: '', date: '' },
+  sb: { eventId: '', date: '' }
+};
+
+// ================================================================
+// API 호출 헬퍼 (모든 요청 GET, x-www-form-urlencoded)
+// ================================================================
+function callApi(action, params, opts) {
+  opts = opts || {};
+  const body = new URLSearchParams();
+  body.append('action', action);
+  Object.keys(params || {}).forEach(k => body.append(k, params[k] == null ? '' : params[k]));
+  const init = {
+    method: opts.method || 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+    redirect: 'follow'
+  };
+  return fetch(SCRIPT_URL, init).then(r => r.json());
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function normalizePhone(v) {
+  let s = String(v == null ? '' : v).replace(/\D/g, '');
+  if (s.length === 10 && s[0] === '1') s = '0' + s;
+  return s;
+}
+function maskPhone(p) {
+  const s = normalizePhone(p);
+  if (s.length !== 11) return s;
+  return s.substring(0,3) + '-****-' + s.substring(7);
+}
+function todayStr() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+
+// ================================================================
+// 모드 분기
+// ================================================================
+function detectMode() {
+  const h = (location.hash || '').toLowerCase();
+  if (h === '#scan') return 'scan';
+  if (h === '#admin') return 'admin';
+  if (h === '#print') return 'print';
+  return 'checkin';
+}
+function showApp(mode) {
+  ['checkin','scan','admin','print'].forEach(m => {
+    const el = document.getElementById('app-' + m);
+    if (el) el.classList.toggle('hidden', m !== mode);
+  });
+  state.mode = mode;
+}
+
+window.addEventListener('hashchange', () => {
+  const m = detectMode();
+  showApp(m);
+  initMode(m);
+});
+
+function initMode(mode) {
+  if (mode === 'checkin') initCheckin();
+  else if (mode === 'scan') initScan();
+  else if (mode === 'admin') initAdmin();
+  else if (mode === 'print') initPrint();
+}
+
+// ================================================================
+// 셀프 체크인 (#checkin)
+// ================================================================
+function initCheckin() {
+  ckResetAll();
+  document.getElementById('ck-event-list').textContent = '행사 목록을 불러오는 중…';
+  callApi('listEvents', {}).then(res => {
+    if (!res.ok) {
+      document.getElementById('ck-event-list').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error || '불러오기 실패')}</div>`;
+      return;
+    }
+    state.events = res.list || [];
+    renderCkEventList();
+  }).catch(err => {
+    document.getElementById('ck-event-list').innerHTML = `<div class="alert alert-error">네트워크 오류: ${escapeHtml(err.message)}</div>`;
+  });
+}
+
+function renderCkEventList() {
+  const wrap = document.getElementById('ck-event-list');
+  if (state.events.length === 0) {
+    wrap.innerHTML = '<div class="muted">진행중인 행사가 없습니다.</div>';
+    return;
+  }
+  let html = '';
+  state.events.forEach(ev => {
+    (ev.dates || []).forEach(d => {
+      html += `<button class="btn btn-ghost" style="display:block;width:100%;text-align:left;margin-bottom:6px"
+        onclick="ckPickEvent('${ev.eventId}', '${d}')">
+        <b>${escapeHtml(ev.name)}</b>${ev.subtitle ? ' · ' + escapeHtml(ev.subtitle) : ''}<br>
+        <span class="muted">${escapeHtml(d)}</span>
+      </button>`;
+    });
+  });
+  wrap.innerHTML = html;
+}
+
+function ckPickEvent(eventId, date) {
+  state.ck.eventId = eventId;
+  state.ck.date = date;
+  const ev = state.events.find(e => e.eventId === eventId);
+  document.getElementById('ck-event-summary').textContent =
+    `${ev ? ev.name : ''} · ${date}`;
+  document.getElementById('ck-step-event').classList.add('hidden');
+  document.getElementById('ck-step-auth').classList.remove('hidden');
+  document.getElementById('ck-key').focus();
+}
+
+function ckBackToEvent() {
+  state.ck = { eventId: '', date: '', member: null, signed: false };
+  document.getElementById('ck-step-auth').classList.add('hidden');
+  document.getElementById('ck-step-sign').classList.add('hidden');
+  document.getElementById('ck-step-done').classList.add('hidden');
+  document.getElementById('ck-step-event').classList.remove('hidden');
+  document.getElementById('ck-key').value = '';
+  document.getElementById('ck-auth-msg').innerHTML = '';
+}
+
+function ckBackToAuth() {
+  document.getElementById('ck-step-sign').classList.add('hidden');
+  document.getElementById('ck-step-auth').classList.remove('hidden');
+  document.getElementById('ck-sign-msg').innerHTML = '';
+}
+
+function ckLookup() {
+  const keyRaw = (document.getElementById('ck-key').value || '').trim();
+  if (!keyRaw) { ckMsg('auth', 'error', '값을 입력하세요.'); return; }
+  // 11자리 숫자면 그대로, 아니면 그대로 (위원ID 또는 이름은 별도 검색 필요 — 현재는 위원ID/연락처만 지원)
+  const norm = normalizePhone(keyRaw);
+  const key = (norm.length === 11) ? norm : keyRaw;
+  callApi('lookup', { eventId: state.ck.eventId, date: state.ck.date, key: key }).then(res => {
+    if (!res.ok) { ckMsg('auth', 'error', res.error || '조회 실패'); return; }
+    if (res.alreadyChecked) { ckMsg('auth', 'warn', '이미 체크인 완료된 위원입니다.'); return; }
+    state.ck.member = res.member;
+    document.getElementById('ck-member-info').innerHTML =
+      `<b>${escapeHtml(res.member.name)}</b> · ${escapeHtml(res.member.dept || '')}` +
+      (res.member.position ? ' · ' + escapeHtml(res.member.position) : '') +
+      `<br><span class="muted">${escapeHtml(res.member.phoneMasked || '')}</span>`;
+    document.getElementById('ck-step-auth').classList.add('hidden');
+    document.getElementById('ck-step-sign').classList.remove('hidden');
+    setupSignatureCanvas('ck-canvas');
+  });
+}
+
+function ckClearSign() { clearSignatureCanvas('ck-canvas'); }
+function ckSubmit() {
+  if (!signatureHasInk('ck-canvas')) { ckMsg('sign', 'warn', '서명을 그려주세요.'); return; }
+  const dataUri = document.getElementById('ck-canvas').toDataURL('image/png');
+  ckMsg('sign', 'info', '제출 중…');
+  callApi('submitSign', {
+    eventId: state.ck.eventId,
+    date: state.ck.date,
+    memberId: state.ck.member.memberId,
+    sign: dataUri,
+    method: '번호'
+  }).then(res => {
+    if (!res.ok) { ckMsg('sign', 'error', res.error || '제출 실패'); return; }
+    document.getElementById('ck-step-sign').classList.add('hidden');
+    document.getElementById('ck-step-done').classList.remove('hidden');
+    document.getElementById('ck-done-name').textContent = res.name + '님';
+    document.getElementById('ck-done-time').textContent = res.time + ' 체크인 완료';
+    setTimeout(ckResetAll, 3000);
+  });
+}
+
+function ckResetAll() {
+  state.ck = { eventId: '', date: '', member: null, signed: false };
+  document.getElementById('ck-step-event').classList.remove('hidden');
+  document.getElementById('ck-step-auth').classList.add('hidden');
+  document.getElementById('ck-step-sign').classList.add('hidden');
+  document.getElementById('ck-step-done').classList.add('hidden');
+  const k = document.getElementById('ck-key'); if (k) k.value = '';
+  document.getElementById('ck-auth-msg').innerHTML = '';
+  document.getElementById('ck-sign-msg').innerHTML = '';
+}
+
+function ckMsg(step, type, msg) {
+  const el = document.getElementById('ck-' + step + '-msg');
+  el.innerHTML = `<div class="alert alert-${type}">${escapeHtml(msg)}</div>`;
+}
+
+// ================================================================
+// 서명 캔버스 (포인터 이벤트)
+// ================================================================
+function setupSignatureCanvas(canvasId) {
+  const c = document.getElementById(canvasId);
+  if (!c || c.dataset.signready === '1') return;
+  const ctx = c.getContext('2d');
+  ctx.lineWidth = 3.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#111';
+  let drawing = false;
+  let hasInk = false;
+  function getPos(ev) {
+    const rect = c.getBoundingClientRect();
+    const x = (ev.clientX - rect.left) * (c.width / rect.width);
+    const y = (ev.clientY - rect.top) * (c.height / rect.height);
+    return { x, y };
+  }
+  c.addEventListener('pointerdown', (ev) => {
+    drawing = true; c.setPointerCapture(ev.pointerId);
+    const p = getPos(ev);
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+    hasInk = true; c.classList.add('has-sign');
+    ev.preventDefault();
+  });
+  c.addEventListener('pointermove', (ev) => {
+    if (!drawing) return;
+    const p = getPos(ev);
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    ev.preventDefault();
+  });
+  ['pointerup','pointerleave','pointercancel'].forEach(t => {
+    c.addEventListener(t, () => { drawing = false; });
+  });
+  c.dataset.signready = '1';
+  c.dataset.hasink = '0';
+  // hasInk 추적용 dataset 업데이트
+  c.addEventListener('pointerdown', () => { c.dataset.hasink = '1'; });
+}
+function clearSignatureCanvas(canvasId) {
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  c.classList.remove('has-sign');
+  c.dataset.hasink = '0';
+}
+function signatureHasInk(canvasId) {
+  return document.getElementById(canvasId).dataset.hasink === '1';
+}
+
+// ================================================================
+// iPad 스캔 (#scan)
+// ================================================================
+function initScan() {
+  document.getElementById('scan-setup').classList.remove('hidden');
+  document.getElementById('scan-running').classList.add('hidden');
+  callApi('listEvents', {}).then(res => {
+    if (!res.ok) return;
+    state.events = res.list || [];
+    const sel = document.getElementById('scan-event-select');
+    let html = '<option value="">— 선택 —</option>';
+    state.events.forEach(ev => {
+      html += `<option value="${ev.eventId}">${escapeHtml(ev.name)}${ev.subtitle ? ' · ' + escapeHtml(ev.subtitle) : ''}</option>`;
+    });
+    sel.innerHTML = html;
+  });
+}
+
+function scanOnEventChange() {
+  const eventId = document.getElementById('scan-event-select').value;
+  const ev = state.events.find(e => e.eventId === eventId);
+  const sel = document.getElementById('scan-date-select');
+  if (!ev) { sel.innerHTML = '<option value="">— 행사 먼저 선택 —</option>'; return; }
+  let html = '';
+  (ev.dates || []).forEach(d => { html += `<option value="${d}">${d}</option>`; });
+  sel.innerHTML = html;
+}
+
+function scanStart() {
+  const eventId = document.getElementById('scan-event-select').value;
+  const date = document.getElementById('scan-date-select').value;
+  if (!eventId || !date) return alert('행사·날짜를 모두 선택해 주세요.');
+  state.scan.eventId = eventId;
+  state.scan.date = date;
+  const ev = state.events.find(e => e.eventId === eventId);
+  document.getElementById('scan-info-event').textContent = `${ev ? ev.name : ''} · ${date}`;
+  document.getElementById('scan-setup').classList.add('hidden');
+  document.getElementById('scan-running').classList.remove('hidden');
+  startQrReader();
+}
+
+function startQrReader() {
+  const reader = new Html5Qrcode('qr-reader');
+  state.scan.html5 = reader;
+  reader.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 280, height: 280 } },
+    onScanSuccess,
+    () => {}
+  ).catch(err => {
+    alert('카메라 시작 실패: ' + err);
+  });
+  state.scan.running = true;
+}
+
+function scanStop() {
+  if (state.scan.html5) {
+    state.scan.html5.stop().then(() => state.scan.html5.clear()).catch(()=>{});
+    state.scan.html5 = null;
+  }
+  state.scan.running = false;
+  document.getElementById('scan-running').classList.add('hidden');
+  document.getElementById('scan-setup').classList.remove('hidden');
+}
+
+function onScanSuccess(decoded) {
+  if (!state.scan.running) return;
+  const now = Date.now();
+  if (now - state.scan.lastScanAt < 3500) return; // 쿨다운
+  state.scan.lastScanAt = now;
+  scanLookup(decoded);
+}
+
+function scanLookup(key) {
+  callApi('lookup', { eventId: state.scan.eventId, date: state.scan.date, key: key }).then(res => {
+    if (!res.ok) return showScanResult('err', '오류', res.error || '조회 실패');
+    if (res.alreadyChecked) return showScanResult('warn', res.member.name, '이미 체크인 완료');
+    state.scan.currentMember = res.member;
+    openScanSign(res.member);
+  });
+}
+
+function openScanSign(member) {
+  document.getElementById('scan-member-info').innerHTML =
+    `<b>${escapeHtml(member.name)}</b> · ${escapeHtml(member.dept || '')}` +
+    (member.position ? ' · ' + escapeHtml(member.position) : '');
+  document.getElementById('scan-sign-msg').innerHTML = '';
+  document.getElementById('scan-sign-modal').classList.remove('hidden');
+  setupSignatureCanvas('scan-canvas');
+  clearSignatureCanvas('scan-canvas');
+}
+function scanClearSign() { clearSignatureCanvas('scan-canvas'); }
+function scanCancelSign() {
+  document.getElementById('scan-sign-modal').classList.add('hidden');
+  state.scan.currentMember = null;
+}
+function scanSubmitSign() {
+  if (!signatureHasInk('scan-canvas')) {
+    document.getElementById('scan-sign-msg').innerHTML = '<div class="alert alert-warn">서명을 그려주세요.</div>';
+    return;
+  }
+  const dataUri = document.getElementById('scan-canvas').toDataURL('image/png');
+  const m = state.scan.currentMember;
+  callApi('submitSign', {
+    eventId: state.scan.eventId, date: state.scan.date,
+    memberId: m.memberId, sign: dataUri, method: 'QR'
+  }).then(res => {
+    document.getElementById('scan-sign-modal').classList.add('hidden');
+    if (res.ok) showScanResult('ok', m.name, res.time + ' 체크인 완료');
+    else showScanResult('err', m.name, res.error || '실패');
+    state.scan.currentMember = null;
+  });
+}
+
+function showScanResult(type, name, msg) {
+  const ov = document.getElementById('scan-result-overlay');
+  ov.classList.remove('ok', 'err', 'warn');
+  ov.classList.add(type);
+  document.getElementById('scan-result-name').textContent = name || '';
+  document.getElementById('scan-result-msg').textContent = msg || '';
+  ov.classList.remove('hidden');
+  setTimeout(() => ov.classList.add('hidden'), 3000);
+}
+
+function scanOpenManual() {
+  document.getElementById('scan-manual-phone').value = '';
+  document.getElementById('scan-manual-msg').innerHTML = '';
+  document.getElementById('scan-manual-modal').classList.remove('hidden');
+}
+function scanCloseManual() { document.getElementById('scan-manual-modal').classList.add('hidden'); }
+function scanManualLookup() {
+  const phone = normalizePhone(document.getElementById('scan-manual-phone').value);
+  if (phone.length !== 11) {
+    document.getElementById('scan-manual-msg').innerHTML = '<div class="alert alert-warn">11자리 번호를 입력하세요.</div>';
+    return;
+  }
+  scanCloseManual();
+  scanLookup(phone);
+}
+
+// ================================================================
+// 관리자 (#admin)
+// ================================================================
+function initAdmin() {
+  document.getElementById('admin-login').classList.remove('hidden');
+  document.getElementById('admin-content').classList.add('hidden');
+  state.adminPw = '';
+  document.getElementById('admin-pw').focus();
+}
+
+function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  callApi('ping', {}).then(() => {
+    callApi('getRoster', { pw: pw }).then(res => {
+      if (!res.ok) {
+        document.getElementById('admin-login-msg').innerHTML =
+          `<div class="alert alert-error">${escapeHtml(res.error || '로그인 실패')}</div>`;
+        return;
+      }
+      state.adminPw = pw;
+      state.roster = res.list || [];
+      document.getElementById('admin-login').classList.add('hidden');
+      document.getElementById('admin-content').classList.remove('hidden');
+      adminTab('roster');
+      renderRoster();
+      loadEvents();
+    });
+  });
+}
+
+function adminLogout() {
+  state.adminPw = '';
+  initAdmin();
+}
+
+function adminTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.admin-tab').forEach(d => d.classList.add('hidden'));
+  const panel = document.getElementById('admin-tab-' + name);
+  if (panel) panel.classList.remove('hidden');
+  if (name === 'attend' || name === 'signbook' || name === 'qr') {
+    fillEventSelect(name === 'attend' ? 'attend-event' : (name === 'signbook' ? 'sb-event' : 'qr-event'));
+    if (name === 'qr') renderQrTargetList();
+  }
+}
+
+// 마스터 명단 렌더
+function renderRoster() {
+  const q = (document.getElementById('roster-search').value || '').toLowerCase().trim();
+  const wrap = document.getElementById('roster-table-wrap');
+  let rows = state.roster;
+  if (q) {
+    rows = rows.filter(m =>
+      m.name.toLowerCase().includes(q) ||
+      (m.dept || '').toLowerCase().includes(q) ||
+      (m.phone || '').includes(q.replace(/\D/g, '')));
+  }
+  if (rows.length === 0) { wrap.innerHTML = '<div class="muted">등록된 위원이 없습니다.</div>'; return; }
+  let html = `<table class="data-table"><thead><tr>
+    <th>위원ID</th><th>이름</th><th>소속</th><th>직책</th><th>연락처</th><th>이메일</th><th>상태</th><th></th>
+  </tr></thead><tbody>`;
+  rows.forEach(m => {
+    html += `<tr>
+      <td>${escapeHtml(m.memberId || '<span class="muted">미부여</span>')}</td>
+      <td><b>${escapeHtml(m.name)}</b></td>
+      <td>${escapeHtml(m.dept || '')}</td>
+      <td>${escapeHtml(m.position || '')}</td>
+      <td>${escapeHtml(maskPhone(m.phone))}</td>
+      <td>${escapeHtml(m.email || '')}</td>
+      <td><span class="tag tag-${m.active ? 'active' : 'inactive'}">${m.active ? '활성' : '비활성'}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openMember(${JSON.stringify(m)})'>수정</button>
+        <button class="btn btn-ghost btn-sm" onclick="confirmToggleActive(${m.rowIndex}, '${escapeHtml(m.name)}', ${m.active})">${m.active ? '비활성' : '활성'}</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function openMember(m) {
+  document.getElementById('modal-member-title').textContent = m ? '위원 수정' : '위원 추가';
+  document.getElementById('m-rowIndex').value = m ? m.rowIndex : '';
+  document.getElementById('m-id').value = m ? (m.memberId || '') : '';
+  document.getElementById('m-id').disabled = !!m;
+  document.getElementById('m-name').value = m ? m.name : '';
+  document.getElementById('m-dept').value = m ? (m.dept || '') : '';
+  document.getElementById('m-position').value = m ? (m.position || '') : '';
+  document.getElementById('m-phone').value = m ? (m.phone || '') : '';
+  document.getElementById('m-email').value = m ? (m.email || '') : '';
+  document.getElementById('m-remark').value = m ? (m.remark || '') : '';
+  document.getElementById('modal-member-msg').innerHTML = '';
+  document.getElementById('modal-member').classList.remove('hidden');
+}
+function closeMember() { document.getElementById('modal-member').classList.add('hidden'); }
+
+function saveMember() {
+  const rowIndex = document.getElementById('m-rowIndex').value;
+  const params = {
+    pw: state.adminPw,
+    memberId: document.getElementById('m-id').value.trim(),
+    name: document.getElementById('m-name').value.trim(),
+    dept: document.getElementById('m-dept').value.trim(),
+    position: document.getElementById('m-position').value.trim(),
+    phone: document.getElementById('m-phone').value.trim(),
+    email: document.getElementById('m-email').value.trim(),
+    remark: document.getElementById('m-remark').value.trim()
+  };
+  if (!params.name) {
+    document.getElementById('modal-member-msg').innerHTML = '<div class="alert alert-warn">이름은 필수입니다.</div>';
+    return;
+  }
+  const action = rowIndex ? 'updateMember' : 'addMember';
+  if (rowIndex) params.rowIndex = rowIndex;
+  callApi(action, params).then(res => {
+    if (!res.ok) {
+      document.getElementById('modal-member-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
+      return;
+    }
+    closeMember();
+    callApi('getRoster', { pw: state.adminPw }).then(r2 => {
+      state.roster = r2.list || [];
+      renderRoster();
+    });
+  });
+}
+
+function confirmToggleActive(rowIndex, name, active) {
+  if (!confirm(`${name}님을 ${active ? '비활성' : '활성'} 처리하시겠습니까?`)) return;
+  callApi('toggleActive', { pw: state.adminPw, rowIndex: rowIndex }).then(res => {
+    if (!res.ok) return alert(res.error);
+    callApi('getRoster', { pw: state.adminPw }).then(r2 => { state.roster = r2.list || []; renderRoster(); });
+  });
+}
+
+function openBulkImport() {
+  document.getElementById('bulk-text').value = '';
+  document.getElementById('bulk-msg').innerHTML = '';
+  document.getElementById('modal-bulk').classList.remove('hidden');
+}
+function closeBulk() { document.getElementById('modal-bulk').classList.add('hidden'); }
+
+function submitBulk() {
+  const txt = (document.getElementById('bulk-text').value || '').trim();
+  if (!txt) return;
+  const lines = txt.split(/\r?\n/).filter(l => l.trim());
+  const rows = lines.map(line => {
+    const cols = line.split('\t').length > 1 ? line.split('\t') : line.split(',');
+    const c = cols.map(s => (s || '').trim());
+    return { name: c[0] || '', dept: c[1] || '', position: c[2] || '', phone: c[3] || '', email: c[4] || '', remark: c[5] || '' };
+  }).filter(r => r.name);
+  if (rows.length === 0) {
+    document.getElementById('bulk-msg').innerHTML = '<div class="alert alert-warn">유효한 행이 없습니다.</div>';
+    return;
+  }
+  // 첫 행이 헤더인지 (이름·소속 등) 추정
+  const first = rows[0];
+  if (first.name === '이름' || first.name === '성명') rows.shift();
+  callApi('bulkImportRoster', { pw: state.adminPw, rows: JSON.stringify(rows) }).then(res => {
+    if (!res.ok) {
+      document.getElementById('bulk-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
+      return;
+    }
+    document.getElementById('bulk-msg').innerHTML =
+      `<div class="alert alert-success">추가 ${res.added}건 / 수정 ${res.updated}건</div>`;
+    callApi('getRoster', { pw: state.adminPw }).then(r2 => { state.roster = r2.list || []; renderRoster(); });
+  });
+}
+
+function assignAllTokens() {
+  if (!confirm('위원ID가 비어있는 행에 자동 부여하시겠습니까?')) return;
+  callApi('assignTokens', { pw: state.adminPw }).then(res => {
+    if (!res.ok) return alert(res.error);
+    alert(`${res.assigned}건 부여되었습니다.`);
+    callApi('getRoster', { pw: state.adminPw }).then(r2 => { state.roster = r2.list || []; renderRoster(); });
+  });
+}
+
+// ----- 행사 관리 -----
+function loadEvents() {
+  callApi('listEventsAdmin', { pw: state.adminPw }).then(res => {
+    if (!res.ok) return;
+    state.eventsAdmin = res.list || [];
+    renderEventList();
+  });
+}
+
+function renderEventList() {
+  const wrap = document.getElementById('event-list-wrap');
+  if (state.eventsAdmin.length === 0) { wrap.innerHTML = '<div class="muted">등록된 행사가 없습니다.</div>'; return; }
+  let html = `<table class="data-table"><thead><tr>
+    <th>행사ID</th><th>행사명</th><th>날짜</th><th>상태</th><th></th>
+  </tr></thead><tbody>`;
+  state.eventsAdmin.forEach(ev => {
+    html += `<tr>
+      <td>${escapeHtml(ev.eventId)}</td>
+      <td><b>${escapeHtml(ev.name)}</b>${ev.subtitle ? '<br><span class="muted">' + escapeHtml(ev.subtitle) + '</span>' : ''}</td>
+      <td>${(ev.dates || []).map(d => escapeHtml(d)).join('<br>')}</td>
+      <td><span class="tag tag-status-${ev.status}">${ev.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openEvent(${JSON.stringify(ev)})'>수정</button>
+        <button class="btn btn-ghost btn-sm" onclick='changeEventStatus("${ev.eventId}", ${ev.rowIndex})'>상태변경</button>
+        <button class="btn btn-danger btn-sm" onclick='confirmDeleteEvent("${ev.eventId}", "${escapeHtml(ev.name)}")'>삭제</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function openEvent(ev) {
+  document.getElementById('modal-event-title').textContent = ev ? '행사 수정' : '행사 생성';
+  document.getElementById('ev-rowIndex').value = ev ? ev.rowIndex : '';
+  document.getElementById('ev-id').value = ev ? ev.eventId : '';
+  document.getElementById('ev-name').value = ev ? ev.name : '';
+  document.getElementById('ev-subtitle').value = ev ? (ev.subtitle || '') : '';
+  document.getElementById('ev-dates').value = ev ? (ev.dates || []).join(', ') : '';
+  const opts = ev ? (ev.formOpts || {}) : {};
+  document.getElementById('ev-orientation').value = opts.orientation || 'portrait';
+  document.getElementById('ev-cols').value = (opts.columns || ['no','name','dept']).join(',');
+  document.getElementById('ev-show-position').checked = !!opts.showPosition;
+  document.getElementById('ev-show-remark').checked = !!opts.showRemark;
+  state.evModal.logoBase64 = opts.logo || '';
+  document.getElementById('ev-logo-preview').innerHTML = state.evModal.logoBase64
+    ? `<img src="${state.evModal.logoBase64}" style="max-height:50px">` : '<span class="muted">로고 없음</span>';
+  document.getElementById('ev-logo-file').onchange = handleLogoUpload;
+
+  // 참석 예정자 체크리스트
+  const expectedSet = {};
+  if (ev) {
+    callApi('getEventDetail', { pw: state.adminPw, eventId: ev.eventId }).then(res => {
+      if (res.ok) {
+        (res.expected || []).forEach(m => expectedSet[m.memberId] = true);
+        renderExpectedList(expectedSet);
+      }
+    });
+  } else {
+    renderExpectedList(expectedSet);
+  }
+  document.getElementById('modal-event-msg').innerHTML = '';
+  document.getElementById('modal-event').classList.remove('hidden');
+}
+
+function renderExpectedList(checked) {
+  const wrap = document.getElementById('ev-expected-list');
+  let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
+    <input type="checkbox" id="ev-check-all" onchange="evToggleAll(this.checked)"> <b>전체 선택</b>
+  </label>`;
+  state.roster.filter(m => m.active).forEach(m => {
+    const c = checked[m.memberId] ? 'checked' : '';
+    html += `<label><input type="checkbox" class="ev-mid" value="${m.memberId}" ${c}>
+      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}${m.position ? ' · ' + escapeHtml(m.position) : ''}</span></label>`;
+  });
+  wrap.innerHTML = html;
+}
+function evToggleAll(v) { document.querySelectorAll('.ev-mid').forEach(el => el.checked = v); }
+
+function handleLogoUpload(ev) {
+  const f = ev.target.files[0];
+  if (!f) return;
+  if (f.size > 500 * 1024) { alert('500KB 이하 이미지를 사용하세요.'); ev.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    state.evModal.logoBase64 = e.target.result;
+    document.getElementById('ev-logo-preview').innerHTML = `<img src="${state.evModal.logoBase64}" style="max-height:50px">`;
+  };
+  reader.readAsDataURL(f);
+}
+
+function closeEvent() { document.getElementById('modal-event').classList.add('hidden'); }
+
+function saveEvent() {
+  const rowIndex = document.getElementById('ev-rowIndex').value;
+  const name = document.getElementById('ev-name').value.trim();
+  const subtitle = document.getElementById('ev-subtitle').value.trim();
+  const datesRaw = document.getElementById('ev-dates').value.trim();
+  const dates = datesRaw.split(/[,\n]/).map(s => s.trim()).filter(Boolean);
+  if (!name) {
+    document.getElementById('modal-event-msg').innerHTML = '<div class="alert alert-warn">행사명 필수</div>'; return;
+  }
+  if (dates.length === 0) {
+    document.getElementById('modal-event-msg').innerHTML = '<div class="alert alert-warn">날짜 1개 이상</div>'; return;
+  }
+  const formOpts = {
+    orientation: document.getElementById('ev-orientation').value,
+    columns: document.getElementById('ev-cols').value.split(','),
+    showPosition: document.getElementById('ev-show-position').checked,
+    showRemark: document.getElementById('ev-show-remark').checked,
+    logo: state.evModal.logoBase64 || ''
+  };
+  const memberIds = Array.from(document.querySelectorAll('.ev-mid:checked')).map(el => el.value);
+
+  const params = {
+    pw: state.adminPw,
+    name: name, subtitle: subtitle,
+    dates: JSON.stringify(dates),
+    formOpts: JSON.stringify(formOpts)
+  };
+  const action = rowIndex ? 'updateEvent' : 'createEvent';
+  if (rowIndex) params.rowIndex = rowIndex;
+
+  callApi(action, params).then(res => {
+    if (!res.ok) {
+      document.getElementById('modal-event-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
+      return;
+    }
+    const eventId = rowIndex ? document.getElementById('ev-id').value : res.eventId;
+    callApi('setExpected', { pw: state.adminPw, eventId: eventId, memberIds: JSON.stringify(memberIds) }).then(() => {
+      closeEvent();
+      loadEvents();
+    });
+  });
+}
+
+function changeEventStatus(eventId, rowIndex) {
+  const next = prompt('상태를 입력하세요 (예정/진행중/종료):', '진행중');
+  if (!next) return;
+  callApi('updateEvent', { pw: state.adminPw, rowIndex: rowIndex, status: next }).then(res => {
+    if (!res.ok) return alert(res.error);
+    loadEvents();
+  });
+}
+function confirmDeleteEvent(eventId, name) {
+  if (!confirm(`행사 "${name}"를 삭제하시겠습니까?\n(기존 출석기록은 보존됩니다)`)) return;
+  callApi('deleteEvent', { pw: state.adminPw, eventId: eventId }).then(res => {
+    if (!res.ok) return alert(res.error);
+    loadEvents();
+  });
+}
+
+// ----- 행사 select 채우기 (출석현황·서명부·QR 탭 공용) -----
+function fillEventSelect(selId) {
+  if (state.eventsAdmin.length === 0) {
+    callApi('listEventsAdmin', { pw: state.adminPw }).then(res => {
+      if (res.ok) { state.eventsAdmin = res.list || []; fillEventSelect(selId); }
+    });
+    return;
+  }
+  const sel = document.getElementById(selId);
+  let html = '<option value="">— 선택 —</option>';
+  state.eventsAdmin.forEach(ev => {
+    html += `<option value="${ev.eventId}">${escapeHtml(ev.name)}${ev.subtitle ? ' · ' + escapeHtml(ev.subtitle) : ''}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
+// ----- 출석 현황 탭 -----
+function attendOnEventChange() {
+  const eventId = document.getElementById('attend-event').value;
+  const ev = state.eventsAdmin.find(e => e.eventId === eventId);
+  const sel = document.getElementById('attend-date');
+  if (!ev) { sel.innerHTML = '<option value="">— 행사 먼저 선택 —</option>'; return; }
+  let html = '';
+  (ev.dates || []).forEach(d => { html += `<option value="${d}">${d}</option>`; });
+  sel.innerHTML = html;
+  loadAttendance();
+}
+
+function loadAttendance() {
+  const eventId = document.getElementById('attend-event').value;
+  const date = document.getElementById('attend-date').value;
+  if (!eventId || !date) return;
+  state.attend.eventId = eventId; state.attend.date = date;
+
+  Promise.all([
+    callApi('getAttendance', { pw: state.adminPw, eventId: eventId, date: date }),
+    callApi('getNoShows', { pw: state.adminPw, eventId: eventId, date: date })
+  ]).then(([att, no]) => {
+    if (!att.ok || !no.ok) {
+      document.getElementById('attend-tables').innerHTML = `<div class="alert alert-error">${escapeHtml(att.error || no.error)}</div>`;
+      return;
+    }
+    const total = (att.list.length + no.list.length);
+    document.getElementById('attend-summary').innerHTML =
+      `<b>${escapeHtml(date)}</b> · 예정 ${total}명 / 출석 <b style="color:var(--success)">${att.list.length}</b>명 / 미참석 <b style="color:var(--error)">${no.list.length}</b>명`;
+    let html = '';
+    html += '<h3 style="color:var(--success);font-size:15px">출석 ' + att.list.length + '명</h3>';
+    if (att.list.length === 0) html += '<div class="muted">없음</div>';
+    else {
+      html += '<table class="data-table"><thead><tr><th>이름</th><th>소속</th><th>직책</th><th>체크인</th><th>방식</th><th>서명</th><th></th></tr></thead><tbody>';
+      att.list.forEach(a => {
+        html += `<tr>
+          <td><b>${escapeHtml(a.name)}</b></td>
+          <td>${escapeHtml(a.dept || '')}</td>
+          <td>${escapeHtml(a.position || '')}</td>
+          <td>${escapeHtml(a.checkInAt)}</td>
+          <td>${escapeHtml(a.method)}</td>
+          <td>${a.sign ? '<img src="' + a.sign + '" style="height:32px">' : ''}</td>
+          <td><button class="btn btn-danger btn-sm" onclick='deleteAttRow("${a.memberId}", "${a.name}")'>삭제</button></td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+    }
+    html += '<h3 style="color:var(--error);font-size:15px;margin-top:20px">미참석 ' + no.list.length + '명</h3>';
+    if (no.list.length === 0) html += '<div class="muted">없음</div>';
+    else {
+      html += '<table class="data-table"><thead><tr><th>이름</th><th>소속</th><th>직책</th><th>연락처</th><th>이메일</th></tr></thead><tbody>';
+      no.list.forEach(m => {
+        html += `<tr>
+          <td><b>${escapeHtml(m.name)}</b></td>
+          <td>${escapeHtml(m.dept || '')}</td>
+          <td>${escapeHtml(m.position || '')}</td>
+          <td>${escapeHtml(maskPhone(m.phone))}</td>
+          <td>${escapeHtml(m.email || '')}</td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      html += `<div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-gold" onclick="sendNoShowMail()">미참석자에게 알림 메일 발송</button>
+      </div>`;
+    }
+    document.getElementById('attend-tables').innerHTML = html;
+  });
+}
+
+function deleteAttRow(memberId, name) {
+  if (!confirm(name + '님의 출석기록을 삭제하시겠습니까?')) return;
+  callApi('deleteAttendance', { pw: state.adminPw, eventId: state.attend.eventId, date: state.attend.date, memberId: memberId }).then(res => {
+    if (!res.ok) return alert(res.error);
+    loadAttendance();
+  });
+}
+
+function sendNoShowMail() {
+  if (!confirm('미참석자에게 알림 메일을 보내시겠습니까?')) return;
+  callApi('sendNoShowAlert', { pw: state.adminPw, eventId: state.attend.eventId, date: state.attend.date }).then(res => {
+    if (!res.ok) return alert(res.error);
+    alert(`전송 ${res.sent}건 / 스킵 ${res.skipped}건 (총 대상 ${res.total}명)`);
+  });
+}
+
+// ----- 서명부 출력 탭 -----
+function sbOnEventChange() {
+  const eventId = document.getElementById('sb-event').value;
+  const ev = state.eventsAdmin.find(e => e.eventId === eventId);
+  const sel = document.getElementById('sb-date');
+  if (!ev) { sel.innerHTML = '<option value="">— 행사 먼저 선택 —</option>'; return; }
+  let html = '<option value="">전체 (모든 날짜를 컬럼으로)</option>';
+  (ev.dates || []).forEach(d => { html += `<option value="${d}">${d}</option>`; });
+  sel.innerHTML = html;
+}
+
+function sbPreview() {
+  const eventId = document.getElementById('sb-event').value;
+  const date = document.getElementById('sb-date').value;
+  const mode = document.getElementById('sb-mode').value;
+  if (!eventId) return alert('행사를 선택하세요.');
+  const ev = state.eventsAdmin.find(e => e.eventId === eventId);
+  if (!ev) return;
+
+  const dates = date ? [date] : (ev.dates || []);
+  callApi('getEventDetail', { pw: state.adminPw, eventId: eventId }).then(res => {
+    if (!res.ok) return alert(res.error);
+    const opts = res.event.formOpts || {};
+    const matrix = res.matrix || {};
+    let members = res.expected || [];
+    if (mode === 'actual') {
+      members = members.filter(m => dates.some(d => matrix[m.memberId] && matrix[m.memberId][d]));
+    }
+    renderSignbookPage(res.event, opts, members, dates, matrix);
+  });
+}
+
+function renderSignbookPage(event, opts, members, dates, matrix) {
+  const orientation = opts.orientation || 'portrait';
+  const showPosition = !!opts.showPosition;
+  const showRemark = !!opts.showRemark;
+  const colsOrder = opts.columns || ['no','name','dept'];
+  const logo = opts.logo || '';
+
+  // 한 페이지 행 수 추정 (orientation 기준 단순값, 자동 분할)
+  const rowsPerPage = orientation === 'landscape' ? 18 : 22;
+  const pages = [];
+  for (let i = 0; i < Math.max(members.length, 1); i += rowsPerPage) {
+    pages.push(members.slice(i, i + rowsPerPage));
+  }
+
+  const buildHeaderRow = () => {
+    let h = '';
+    colsOrder.forEach(c => {
+      if (c === 'no') h += '<th class="col-no">NO.</th>';
+      else if (c === 'name') h += '<th class="col-name">성명</th>';
+      else if (c === 'dept') h += '<th class="col-dept">소속</th>';
+    });
+    if (showPosition) h += '<th class="col-position">직책</th>';
+    dates.forEach(d => {
+      const dt = new Date(d);
+      const wk = ['일','월','화','수','목','금','토'][dt.getDay()];
+      h += `<th>${escapeHtml(d.substring(5))}(${wk})</th>`;
+    });
+    if (showRemark) h += '<th class="col-remark">비고</th>';
+    return '<tr>' + h + '</tr>';
+  };
+
+  const buildBodyRow = (m, idx) => {
+    let r = '';
+    colsOrder.forEach(c => {
+      if (c === 'no') r += `<td>${idx + 1}</td>`;
+      else if (c === 'name') r += `<td>${escapeHtml(m.name)}</td>`;
+      else if (c === 'dept') r += `<td>${escapeHtml(m.dept || '')}</td>`;
+    });
+    if (showPosition) r += `<td>${escapeHtml(m.position || '')}</td>`;
+    dates.forEach(d => {
+      const sign = (matrix[m.memberId] || {})[d];
+      r += `<td class="sign-cell" style="height:18mm">${sign ? '<img src="' + sign + '">' : ''}</td>`;
+    });
+    if (showRemark) r += '<td></td>';
+    return '<tr>' + r + '</tr>';
+  };
+
+  let pageHtml = '';
+  pages.forEach((pageMembers, pageIdx) => {
+    pageHtml += `<div class="signbook-page ${orientation}">
+      <div class="signbook-head">
+        <div style="min-width:30mm">${logo ? '<img src="' + logo + '" class="logo">' : ''}</div>
+        <div class="title">
+          <h1>${escapeHtml(event.name)}</h1>
+          ${event.subtitle ? '<div class="subtitle">' + escapeHtml(event.subtitle) + '</div>' : ''}
+        </div>
+        <div style="min-width:30mm;text-align:right" class="muted">${pages.length > 1 ? (pageIdx+1) + ' / ' + pages.length : ''}</div>
+      </div>
+      <table class="signbook-table">
+        <thead>${buildHeaderRow()}</thead>
+        <tbody>${pageMembers.map((m, i) => buildBodyRow(m, pageIdx * rowsPerPage + i)).join('')}</tbody>
+      </table>
+    </div>`;
+  });
+  if (pages.length === 0 || pages[0].length === 0) {
+    pageHtml = '<div class="card"><div class="alert alert-warn">출력할 명단이 없습니다.</div></div>';
+  }
+  document.getElementById('sb-preview').innerHTML = pageHtml;
+}
+
+// ----- QR 카드 메일 발송 탭 -----
+function renderQrTargetList() {
+  const wrap = document.getElementById('qr-target-list');
+  let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
+    <input type="checkbox" id="qr-check-all" onchange="qrToggleAll(this.checked)"> <b>전체 선택</b>
+  </label>`;
+  state.roster.filter(m => m.active).forEach(m => {
+    html += `<label><input type="checkbox" class="qr-mid" value="${m.memberId}">
+      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')} · ${escapeHtml(m.email || '메일없음')}</span></label>`;
+  });
+  wrap.innerHTML = html;
+}
+function qrToggleAll(v) { document.querySelectorAll('.qr-mid').forEach(el => el.checked = v); }
+
+function sendQrEmailNow() {
+  const eventId = document.getElementById('qr-event').value;
+  const subject = document.getElementById('qr-subject').value.trim();
+  const body = document.getElementById('qr-body').value.trim();
+  const memberIds = Array.from(document.querySelectorAll('.qr-mid:checked')).map(el => el.value);
+  const targets = memberIds.length > 0
+    ? state.roster.filter(m => memberIds.indexOf(m.memberId) >= 0)
+    : state.roster.filter(m => m.active);
+  if (targets.length === 0) { alert('대상 위원이 없습니다.'); return; }
+  if (!confirm(`${targets.length}명에게 발송하시겠습니까?`)) return;
+
+  // QR PNG 생성 (각 위원 ID로)
+  const qrPngs = {};
+  targets.forEach(m => {
+    if (!m.memberId) return;
+    qrPngs[m.memberId] = makeQrPngDataUri(m.memberId);
+  });
+
+  document.getElementById('qr-send-msg').innerHTML = '<div class="alert alert-info">전송 중… 잠시만 기다려 주세요.</div>';
+  callApi('sendQrEmail', {
+    pw: state.adminPw,
+    eventId: eventId,
+    memberIds: JSON.stringify(memberIds),
+    qrPngs: JSON.stringify(qrPngs),
+    subject: subject,
+    bodyTemplate: body
+  }).then(res => {
+    if (!res.ok) {
+      document.getElementById('qr-send-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
+      return;
+    }
+    document.getElementById('qr-send-msg').innerHTML =
+      `<div class="alert alert-success">전송 ${res.sent}건 / 스킵 ${res.skipped}건${(res.errors && res.errors.length) ? '<br>오류: ' + escapeHtml(res.errors.join(', ')) : ''}</div>`;
+  });
+}
+
+function goPrintQr() {
+  if (!confirm('QR 카드 인쇄 페이지로 이동합니다. (관리자 비밀번호 다시 필요)')) return;
+  location.hash = '#print';
+}
+
+// ----- QR PNG 생성 (qrcode-generator) -----
+function makeQrPngDataUri(text) {
+  // QR 생성 → SVG → Canvas → PNG dataURL
+  const qr = qrcode(0, 'M');
+  qr.addData(String(text));
+  qr.make();
+  const cells = qr.getModuleCount();
+  const cellSize = 8;
+  const margin = 16;
+  const size = cells * cellSize + margin * 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = '#000';
+  for (let r = 0; r < cells; r++) {
+    for (let c = 0; c < cells; c++) {
+      if (qr.isDark(r, c)) ctx.fillRect(margin + c * cellSize, margin + r * cellSize, cellSize, cellSize);
+    }
+  }
+  return canvas.toDataURL('image/png');
+}
+
+// ================================================================
+// QR 카드 인쇄 (#print)
+// ================================================================
+function initPrint() {
+  document.getElementById('print-login').classList.remove('hidden');
+  document.getElementById('print-content').classList.add('hidden');
+  state.printPw = '';
+  document.getElementById('print-pw').focus();
+}
+function printLogin() {
+  const pw = document.getElementById('print-pw').value;
+  callApi('getRoster', { pw: pw }).then(res => {
+    if (!res.ok) {
+      document.getElementById('print-login-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
+      return;
+    }
+    state.printPw = pw;
+    state.roster = res.list || [];
+    document.getElementById('print-login').classList.add('hidden');
+    document.getElementById('print-content').classList.remove('hidden');
+    renderPrintTargets();
+  });
+}
+function renderPrintTargets() {
+  const wrap = document.getElementById('print-target-list');
+  let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
+    <input type="checkbox" id="print-check-all" onchange="printToggleAll(this.checked)"> <b>전체 선택</b>
+  </label>`;
+  state.roster.filter(m => m.active).forEach(m => {
+    html += `<label><input type="checkbox" class="print-mid" value="${m.memberId}">
+      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}</span></label>`;
+  });
+  wrap.innerHTML = html;
+}
+function printToggleAll(v) { document.querySelectorAll('.print-mid').forEach(el => el.checked = v); }
+
+function renderPrintCards() {
+  const memberIds = Array.from(document.querySelectorAll('.print-mid:checked')).map(el => el.value);
+  const targets = memberIds.length > 0
+    ? state.roster.filter(m => memberIds.indexOf(m.memberId) >= 0)
+    : state.roster.filter(m => m.active);
+  const wrap = document.getElementById('print-pages');
+  if (targets.length === 0) { wrap.innerHTML = '<div class="alert alert-warn">대상이 없습니다.</div>'; return; }
+
+  let html = '';
+  for (let i = 0; i < targets.length; i += 4) {
+    html += '<div class="print-page">';
+    for (let j = 0; j < 4; j++) {
+      const m = targets[i + j];
+      if (m) {
+        const png = makeQrPngDataUri(m.memberId);
+        html += `<div class="qr-card">
+          <div class="head">가천대학교 입학사정관실</div>
+          <div class="qr"><img src="${png}"></div>
+          <div class="name">${escapeHtml(m.name)}</div>
+          <div class="dept">${escapeHtml(m.dept || '')}${m.position ? ' · ' + escapeHtml(m.position) : ''}</div>
+          <div class="id">${escapeHtml(m.memberId)}</div>
+        </div>`;
+      } else {
+        html += '<div></div>';
+      }
+    }
+    html += '</div>';
+  }
+  wrap.innerHTML = html;
+}
+
+// ================================================================
+// 부팅
+// ================================================================
+window.addEventListener('DOMContentLoaded', () => {
+  const m = detectMode();
+  showApp(m);
+  initMode(m);
+});
+</script>
+</body>
+</html>
