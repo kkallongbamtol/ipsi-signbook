@@ -1823,13 +1823,14 @@ function goPrintQr() {
 
 // ----- QR PNG 생성 (qrcode-generator) -----
 function makeQrPngDataUri(text) {
-  // QR 생성 → SVG → Canvas → PNG dataURL
-  const qr = qrcode(0, 'M');
+  // QR 생성 → Canvas → PNG dataURL
+  // 에러 정정 레벨 H (30%) — 손상·반사에 강함
+  const qr = qrcode(0, 'H');
   qr.addData(String(text));
   qr.make();
   const cells = qr.getModuleCount();
-  const cellSize = 8;
-  const margin = 16;
+  const cellSize = 14;  // 한 셀 크기 ↑
+  const margin = 28;    // 외곽 여백 ↑ (Quiet Zone 충분히 확보)
   const size = cells * cellSize + margin * 2;
   const canvas = document.createElement('canvas');
   canvas.width = size; canvas.height = size;
