@@ -125,7 +125,7 @@ body { font-size: 15px; line-height: 1.5; }
   max-height: 360px; overflow-y: auto; border: 1px solid var(--line);
   border-radius: 6px; padding: 8px;
 }
-.checkbox-list label { display: flex; align-items: center; padding: 6px 4px; gap: 8px; }
+.checkbox-list label { display: flex; align-items: center; padding: 6px 4px; gap: 8px; word-break: keep-all; flex-wrap: wrap; }
 .checkbox-list label:hover { background: #f7f8fa; }
 .modal-bg {
   position: fixed; inset: 0; background: rgba(0,0,0,0.45);
@@ -401,8 +401,12 @@ body { font-size: 15px; line-height: 1.5; }
       <div class="card">
         <div class="row" style="align-items:center">
           <input id="roster-search" placeholder="이름·소속·연락처 검색" oninput="renderRoster()" style="flex:1; padding:8px 12px; border:1px solid var(--line-strong); border-radius:6px">
+          <select id="roster-group-filter" onchange="renderRoster()" style="padding:8px 10px; border:1px solid var(--line-strong); border-radius:6px">
+            <option value="">전체 그룹</option>
+          </select>
           <button class="btn btn-sm" onclick="openMember()">+ 추가</button>
           <button class="btn btn-ghost btn-sm" onclick="openBulkImport()">엑셀 일괄 업로드</button>
+          <button class="btn btn-ghost btn-sm" onclick="openGroupManager()">그룹 관리</button>
           <button class="btn btn-ghost btn-sm" onclick="assignAllTokens()">위원ID 일괄 부여</button>
         </div>
       </div>
@@ -489,7 +493,14 @@ body { font-size: 15px; line-height: 1.5; }
           <textarea id="qr-body" rows="6" placeholder="비워두면 기본 안내문 사용"></textarea>
         </div>
         <div class="field">
-          <label>대상 위원 (체크 시 선택자만, 미체크 시 활성 전원)</label>
+          <label>대상 위원 (체크 시 선택자만, 미체크 시 필터 결과 전원)</label>
+          <div class="row" style="margin-bottom: 6px">
+            <div class="col">
+              <select id="qr-filter-group" onchange="renderQrTargetList()" style="width:100%; padding:6px 10px; border:1px solid var(--line-strong); border-radius:6px">
+                <option value="">전체 그룹</option>
+              </select>
+            </div>
+          </div>
           <div id="qr-target-list" class="checkbox-list"></div>
         </div>
         <div class="btn-row">
@@ -513,6 +524,10 @@ body { font-size: 15px; line-height: 1.5; }
       <div class="field"><label>휴대폰 11자리</label><input id="m-phone" inputmode="numeric" maxlength="13"></div>
       <div class="field"><label>이메일</label><input id="m-email" type="email"></div>
       <div class="field"><label>비고</label><input id="m-remark"></div>
+      <div class="field">
+        <label>그룹 (복수 선택 가능)</label>
+        <div id="m-groups" class="checkbox-list" style="max-height: 160px"></div>
+      </div>
       <div class="btn-row">
         <button class="btn" onclick="saveMember()">저장</button>
         <button class="btn btn-ghost" onclick="closeMember()">취소</button>
@@ -521,14 +536,31 @@ body { font-size: 15px; line-height: 1.5; }
     </div>
   </div>
 
+  <div id="modal-group" class="modal-bg hidden">
+    <div class="modal">
+      <h3>그룹 관리</h3>
+      <div class="muted" style="margin-bottom:10px">행사 생성 시 후보 필터·서명부 헤더 라벨로 사용됩니다.</div>
+      <div id="group-list-wrap" style="margin-bottom: 12px"></div>
+      <div class="field-row">
+        <input id="group-new-name" placeholder="새 그룹명 (예: 평가위원)">
+        <button class="btn" onclick="addGroupNow()">+ 추가</button>
+      </div>
+      <div class="btn-row" style="margin-top: 10px">
+        <button class="btn btn-ghost" onclick="closeGroupManager()">닫기</button>
+      </div>
+      <div id="modal-group-msg" style="margin-top: 10px"></div>
+    </div>
+  </div>
+
   <div id="modal-bulk" class="modal-bg hidden">
     <div class="modal">
       <h3>엑셀 일괄 업로드</h3>
       <div class="muted" style="margin-bottom:10px">
-        엑셀에서 <b>이름·소속·직책·연락처·이메일·비고</b> 6개 컬럼을 <b>그대로 복사</b>하여 아래 칸에 붙여 넣으세요.<br>
+        엑셀에서 <b>이름·소속·직책·연락처·이메일·비고·그룹</b> 7개 컬럼을 <b>그대로 복사</b>하여 아래 칸에 붙여 넣으세요.<br>
+        그룹은 콤마(,)로 여러 개 입력 가능합니다. 예: <code>평가위원,면접위원</code><br>
         같은 이름+연락처가 이미 있으면 덮어쓰고, 없으면 새로 추가합니다.
       </div>
-      <textarea id="bulk-text" rows="10" style="width:100%; font-family: monospace; font-size: 13px" placeholder="이름&#9;소속&#9;직책&#9;연락처&#9;이메일&#9;비고"></textarea>
+      <textarea id="bulk-text" rows="10" style="width:100%; font-family: monospace; font-size: 13px" placeholder="이름&#9;소속&#9;직책&#9;연락처&#9;이메일&#9;비고&#9;그룹"></textarea>
       <div class="btn-row" style="margin-top: 10px">
         <button class="btn" onclick="submitBulk()">업로드</button>
         <button class="btn btn-ghost" onclick="closeBulk()">취소</button>
@@ -552,6 +584,14 @@ body { font-size: 15px; line-height: 1.5; }
       </div>
       <div class="field">
         <label>참석 예정자 선택</label>
+        <div class="row" style="margin-bottom: 6px">
+          <div class="col">
+            <select id="ev-filter-group" onchange="evApplyGroupFilter()" style="width:100%; padding:6px 10px; border:1px solid var(--line-strong); border-radius:6px">
+              <option value="">전체 그룹</option>
+            </select>
+          </div>
+          <div class="col"><span class="muted" id="ev-expected-count" style="font-size:12px"></span></div>
+        </div>
         <div id="ev-expected-list" class="checkbox-list"></div>
       </div>
       <div class="card" style="background: #f7f8fa; border:1px solid var(--line); margin-top: 10px">
@@ -570,6 +610,10 @@ body { font-size: 15px; line-height: 1.5; }
         <div class="row">
           <div class="col"><label><input type="checkbox" id="ev-show-position"> 직책 컬럼 표시</label></div>
           <div class="col"><label><input type="checkbox" id="ev-show-remark"> 비고 컬럼 표시</label></div>
+        </div>
+        <div class="field">
+          <label>서명부 헤더 그룹 라벨 (예: 면접위원, 진행감독) — 비우면 미표시</label>
+          <input id="ev-header-group" placeholder="자동 채움: 후보 필터에서 선택한 그룹">
         </div>
         <div class="field">
           <label>가천대 로고 (옵션) — 이미지 파일 선택</label>
@@ -631,6 +675,7 @@ const state = {
   events: [],          // 활성 행사 (체크인용)
   eventsAdmin: [],     // 전체 행사 (관리자용)
   roster: [],          // 마스터
+  groups: [],          // 그룹 라벨 [{name, sort, remark}]
   // 셀프 체크인
   ck: { eventId: '', date: '', member: null, signed: false },
   // iPad 스캔
@@ -1044,9 +1089,11 @@ function adminLogin() {
       state.roster = res.list || [];
       document.getElementById('admin-login').classList.add('hidden');
       document.getElementById('admin-content').classList.remove('hidden');
-      adminTab('roster');
-      renderRoster();
-      loadEvents();
+      loadGroups().then(() => {
+        adminTab('roster');
+        renderRoster();
+        loadEvents();
+      });
     });
   });
 }
@@ -1067,27 +1114,121 @@ function adminTab(name) {
   }
 }
 
+// 그룹 로드 / 표시 / 관리
+function loadGroups() {
+  return callApi('getGroups', { pw: state.adminPw }).then(res => {
+    if (res.ok) {
+      state.groups = res.list || [];
+      fillGroupSelects();
+    }
+    return res;
+  });
+}
+
+function fillGroupSelects() {
+  const ids = ['roster-group-filter', 'ev-filter-group', 'qr-filter-group'];
+  ids.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const cur = sel.value;
+    let html = '<option value="">전체 그룹</option>';
+    state.groups.forEach(g => { html += `<option value="${escapeHtml(g.name)}">${escapeHtml(g.name)}</option>`; });
+    sel.innerHTML = html;
+    if (cur && state.groups.some(g => g.name === cur)) sel.value = cur;
+  });
+}
+
+function renderMemberGroupCheckboxes(checked) {
+  const wrap = document.getElementById('m-groups');
+  if (!wrap) return;
+  if (state.groups.length === 0) {
+    wrap.innerHTML = '<span class="muted">등록된 그룹이 없습니다. "그룹 관리" 버튼에서 추가하세요.</span>';
+    return;
+  }
+  wrap.innerHTML = state.groups.map(g => {
+    const c = (checked || []).indexOf(g.name) >= 0 ? 'checked' : '';
+    return `<label><input type="checkbox" class="m-group-chk" value="${escapeHtml(g.name)}" ${c}> ${escapeHtml(g.name)}</label>`;
+  }).join('');
+}
+
+function openGroupManager() {
+  loadGroups().then(() => renderGroupListInModal());
+  document.getElementById('group-new-name').value = '';
+  document.getElementById('modal-group-msg').innerHTML = '';
+  document.getElementById('modal-group').classList.remove('hidden');
+}
+function closeGroupManager() { document.getElementById('modal-group').classList.add('hidden'); }
+
+function renderGroupListInModal() {
+  const wrap = document.getElementById('group-list-wrap');
+  if (state.groups.length === 0) {
+    wrap.innerHTML = '<div class="muted">등록된 그룹이 없습니다.</div>'; return;
+  }
+  let html = '<table class="data-table"><thead><tr><th>순서</th><th>그룹명</th><th></th></tr></thead><tbody>';
+  state.groups.forEach((g, i) => {
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td>${escapeHtml(g.name)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteGroupNow('${escapeHtml(g.name)}')">삭제</button></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function addGroupNow() {
+  const name = document.getElementById('group-new-name').value.trim();
+  if (!name) return;
+  callApi('addGroup', { pw: state.adminPw, name: name }).then(res => {
+    if (!res.ok) {
+      document.getElementById('modal-group-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
+      return;
+    }
+    document.getElementById('group-new-name').value = '';
+    loadGroups().then(() => renderGroupListInModal());
+  });
+}
+
+function deleteGroupNow(name) {
+  if (!confirm(`그룹 "${name}"을 삭제하시겠습니까?\n해당 그룹이 부여된 위원의 그룹 정보에서도 제거됩니다.`)) return;
+  callApi('deleteGroup', { pw: state.adminPw, name: name }).then(res => {
+    if (!res.ok) return alert(res.error);
+    // 마스터 다시 로드 (위원의 그룹 갱신)
+    callApi('getRoster', { pw: state.adminPw }).then(r2 => {
+      state.roster = r2.list || [];
+      loadGroups().then(() => { renderGroupListInModal(); renderRoster(); });
+    });
+  });
+}
+
 // 마스터 명단 렌더
 function renderRoster() {
   const q = (document.getElementById('roster-search').value || '').toLowerCase().trim();
+  const filterGroup = (document.getElementById('roster-group-filter').value || '').trim();
   const wrap = document.getElementById('roster-table-wrap');
   let rows = state.roster;
   if (q) {
     rows = rows.filter(m =>
       m.name.toLowerCase().includes(q) ||
       (m.dept || '').toLowerCase().includes(q) ||
-      (m.phone || '').includes(q.replace(/\D/g, '')));
+      (m.phone || '').includes(q.replace(/\D/g, '')) ||
+      (m.groups || []).some(g => g.toLowerCase().includes(q)));
   }
-  if (rows.length === 0) { wrap.innerHTML = '<div class="muted">등록된 위원이 없습니다.</div>'; return; }
+  if (filterGroup) {
+    rows = rows.filter(m => (m.groups || []).indexOf(filterGroup) >= 0);
+  }
+  if (rows.length === 0) { wrap.innerHTML = '<div class="muted">조건에 맞는 위원이 없습니다.</div>'; return; }
   let html = `<table class="data-table"><thead><tr>
-    <th>위원ID</th><th>이름</th><th>소속</th><th>직책</th><th>연락처</th><th>이메일</th><th>상태</th><th></th>
+    <th>위원ID</th><th>이름</th><th>소속</th><th>직책</th><th>그룹</th><th>연락처</th><th>이메일</th><th>상태</th><th></th>
   </tr></thead><tbody>`;
   rows.forEach(m => {
+    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="margin-right:2px">${escapeHtml(g)}</span>`).join('');
     html += `<tr>
       <td>${escapeHtml(m.memberId || '<span class="muted">미부여</span>')}</td>
       <td><b>${escapeHtml(m.name)}</b></td>
       <td>${escapeHtml(m.dept || '')}</td>
       <td>${escapeHtml(m.position || '')}</td>
+      <td>${groupTags}</td>
       <td>${escapeHtml(maskPhone(m.phone))}</td>
       <td>${escapeHtml(m.email || '')}</td>
       <td><span class="tag tag-${m.active ? 'active' : 'inactive'}">${m.active ? '활성' : '비활성'}</span></td>
@@ -1112,6 +1253,7 @@ function openMember(m) {
   document.getElementById('m-phone').value = m ? (m.phone || '') : '';
   document.getElementById('m-email').value = m ? (m.email || '') : '';
   document.getElementById('m-remark').value = m ? (m.remark || '') : '';
+  renderMemberGroupCheckboxes(m ? (m.groups || []) : []);
   document.getElementById('modal-member-msg').innerHTML = '';
   document.getElementById('modal-member').classList.remove('hidden');
 }
@@ -1119,6 +1261,7 @@ function closeMember() { document.getElementById('modal-member').classList.add('
 
 function saveMember() {
   const rowIndex = document.getElementById('m-rowIndex').value;
+  const groups = Array.from(document.querySelectorAll('.m-group-chk:checked')).map(el => el.value);
   const params = {
     pw: state.adminPw,
     memberId: document.getElementById('m-id').value.trim(),
@@ -1127,7 +1270,8 @@ function saveMember() {
     position: document.getElementById('m-position').value.trim(),
     phone: document.getElementById('m-phone').value.trim(),
     email: document.getElementById('m-email').value.trim(),
-    remark: document.getElementById('m-remark').value.trim()
+    remark: document.getElementById('m-remark').value.trim(),
+    groups: JSON.stringify(groups)
   };
   if (!params.name) {
     document.getElementById('modal-member-msg').innerHTML = '<div class="alert alert-warn">이름은 필수입니다.</div>';
@@ -1170,7 +1314,7 @@ function submitBulk() {
   const rows = lines.map(line => {
     const cols = line.split('\t').length > 1 ? line.split('\t') : line.split(',');
     const c = cols.map(s => (s || '').trim());
-    return { name: c[0] || '', dept: c[1] || '', position: c[2] || '', phone: c[3] || '', email: c[4] || '', remark: c[5] || '' };
+    return { name: c[0] || '', dept: c[1] || '', position: c[2] || '', phone: c[3] || '', email: c[4] || '', remark: c[5] || '', groups: c[6] || '' };
   }).filter(r => r.name);
   if (rows.length === 0) {
     document.getElementById('bulk-msg').innerHTML = '<div class="alert alert-warn">유효한 행이 없습니다.</div>';
@@ -1243,6 +1387,8 @@ function openEvent(ev) {
   document.getElementById('ev-cols').value = (opts.columns || ['no','name','dept']).join(',');
   document.getElementById('ev-show-position').checked = !!opts.showPosition;
   document.getElementById('ev-show-remark').checked = !!opts.showRemark;
+  document.getElementById('ev-header-group').value = opts.headerGroup || '';
+  document.getElementById('ev-filter-group').value = opts.filterGroup || '';
   state.evModal.logoBase64 = opts.logo || '';
   document.getElementById('ev-logo-preview').innerHTML = state.evModal.logoBase64
     ? `<img src="${state.evModal.logoBase64}" style="max-height:50px">` : '<span class="muted">로고 없음</span>';
@@ -1266,17 +1412,35 @@ function openEvent(ev) {
 
 function renderExpectedList(checked) {
   const wrap = document.getElementById('ev-expected-list');
+  const filterGroup = (document.getElementById('ev-filter-group').value || '').trim();
+  const candidates = state.roster.filter(m => {
+    if (!m.active) return false;
+    if (filterGroup && (m.groups || []).indexOf(filterGroup) < 0) return false;
+    return true;
+  });
   let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
-    <input type="checkbox" id="ev-check-all" onchange="evToggleAll(this.checked)"> <b>전체 선택</b>
+    <input type="checkbox" id="ev-check-all" onchange="evToggleAll(this.checked)"> <b>전체 선택 (필터 결과)</b>
   </label>`;
-  state.roster.filter(m => m.active).forEach(m => {
+  candidates.forEach(m => {
     const c = checked[m.memberId] ? 'checked' : '';
+    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="margin-left:4px;font-size:10px">${escapeHtml(g)}</span>`).join('');
     html += `<label><input type="checkbox" class="ev-mid" value="${m.memberId}" ${c}>
-      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}${m.position ? ' · ' + escapeHtml(m.position) : ''}</span></label>`;
+      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')}${m.position ? ' · ' + escapeHtml(m.position) : ''}</span>${groupTags}</label>`;
   });
   wrap.innerHTML = html;
+  document.getElementById('ev-expected-count').textContent = `후보 ${candidates.length}명`;
 }
 function evToggleAll(v) { document.querySelectorAll('.ev-mid').forEach(el => el.checked = v); }
+function evApplyGroupFilter() {
+  // 현재 체크된 ID 보존
+  const checked = {};
+  document.querySelectorAll('.ev-mid:checked').forEach(el => { checked[el.value] = true; });
+  // 필터 그룹이 있고, 헤더 라벨이 비어있으면 자동 채움
+  const filterGroup = (document.getElementById('ev-filter-group').value || '').trim();
+  const headerInp = document.getElementById('ev-header-group');
+  if (filterGroup && !headerInp.value.trim()) headerInp.value = filterGroup;
+  renderExpectedList(checked);
+}
 
 function handleLogoUpload(ev) {
   const f = ev.target.files[0];
@@ -1309,6 +1473,8 @@ function saveEvent() {
     columns: document.getElementById('ev-cols').value.split(','),
     showPosition: document.getElementById('ev-show-position').checked,
     showRemark: document.getElementById('ev-show-remark').checked,
+    headerGroup: document.getElementById('ev-header-group').value.trim(),
+    filterGroup: document.getElementById('ev-filter-group').value.trim(),
     logo: state.evModal.logoBase64 || ''
   };
   const memberIds = Array.from(document.querySelectorAll('.ev-mid:checked')).map(el => el.value);
@@ -1478,7 +1644,10 @@ function sbPreview() {
     const matrix = res.matrix || {};
     let members = res.expected || [];
     if (mode === 'actual') {
-      members = members.filter(m => dates.some(d => matrix[m.memberId] && matrix[m.memberId][d]));
+      members = members.filter(m => dates.some(d => {
+        const cell = matrix[m.memberId] && matrix[m.memberId][d];
+        return cell && (cell.sign || cell.time);
+      }));
     }
     renderSignbookPage(res.event, opts, members, dates, matrix);
   });
@@ -1524,7 +1693,8 @@ function renderSignbookPage(event, opts, members, dates, matrix) {
     });
     if (showPosition) r += `<td>${escapeHtml(m.position || '')}</td>`;
     dates.forEach(d => {
-      const sign = (matrix[m.memberId] || {})[d];
+      const cell = (matrix[m.memberId] || {})[d];
+      const sign = cell && cell.sign;
       r += `<td class="sign-cell" style="height:18mm">${sign ? '<img src="' + sign + '">' : ''}</td>`;
     });
     if (showRemark) r += '<td></td>';
@@ -1532,12 +1702,13 @@ function renderSignbookPage(event, opts, members, dates, matrix) {
   };
 
   let pageHtml = '';
+  const headerGroup = (opts.headerGroup || opts.filterGroup || '').trim();
   pages.forEach((pageMembers, pageIdx) => {
     pageHtml += `<div class="signbook-page ${orientation}">
       <div class="signbook-head">
         <div style="min-width:30mm">${logo ? '<img src="' + logo + '" class="logo">' : ''}</div>
         <div class="title">
-          <h1>${escapeHtml(event.name)}</h1>
+          <h1>${escapeHtml(event.name)}${headerGroup ? ' <span style="font-size:13pt">(' + escapeHtml(headerGroup) + ')</span>' : ''}</h1>
           ${event.subtitle ? '<div class="subtitle">' + escapeHtml(event.subtitle) + '</div>' : ''}
         </div>
         <div style="min-width:30mm;text-align:right" class="muted">${pages.length > 1 ? (pageIdx+1) + ' / ' + pages.length : ''}</div>
@@ -1557,12 +1728,19 @@ function renderSignbookPage(event, opts, members, dates, matrix) {
 // ----- QR 카드 메일 발송 탭 -----
 function renderQrTargetList() {
   const wrap = document.getElementById('qr-target-list');
+  const filterGroup = (document.getElementById('qr-filter-group').value || '').trim();
+  const candidates = state.roster.filter(m => {
+    if (!m.active) return false;
+    if (filterGroup && (m.groups || []).indexOf(filterGroup) < 0) return false;
+    return true;
+  });
   let html = `<label style="border-bottom:1px solid var(--line);padding-bottom:4px">
-    <input type="checkbox" id="qr-check-all" onchange="qrToggleAll(this.checked)"> <b>전체 선택</b>
+    <input type="checkbox" id="qr-check-all" onchange="qrToggleAll(this.checked)"> <b>전체 선택 (필터 결과 ${candidates.length}명)</b>
   </label>`;
-  state.roster.filter(m => m.active).forEach(m => {
+  candidates.forEach(m => {
+    const groupTags = (m.groups || []).map(g => `<span class="tag tag-active" style="margin-left:4px;font-size:10px">${escapeHtml(g)}</span>`).join('');
     html += `<label><input type="checkbox" class="qr-mid" value="${m.memberId}">
-      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')} · ${escapeHtml(m.email || '메일없음')}</span></label>`;
+      ${escapeHtml(m.name)} <span class="muted">${escapeHtml(m.dept || '')} · ${escapeHtml(m.email || '메일없음')}</span>${groupTags}</label>`;
   });
   wrap.innerHTML = html;
 }
@@ -1573,9 +1751,15 @@ function sendQrEmailNow() {
   const subject = document.getElementById('qr-subject').value.trim();
   const body = document.getElementById('qr-body').value.trim();
   const memberIds = Array.from(document.querySelectorAll('.qr-mid:checked')).map(el => el.value);
+  const filterGroup = (document.getElementById('qr-filter-group').value || '').trim();
+  const baseList = state.roster.filter(m => {
+    if (!m.active) return false;
+    if (filterGroup && (m.groups || []).indexOf(filterGroup) < 0) return false;
+    return true;
+  });
   const targets = memberIds.length > 0
     ? state.roster.filter(m => memberIds.indexOf(m.memberId) >= 0)
-    : state.roster.filter(m => m.active);
+    : baseList;
   if (targets.length === 0) { alert('대상 위원이 없습니다.'); return; }
   if (!confirm(`${targets.length}명에게 발송하시겠습니까?`)) return;
 
