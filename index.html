@@ -505,6 +505,12 @@ body { font-size: 15px; line-height: 1.5; }
           <input id="qr-subject" placeholder="[가천대 입학사정관실] ○○ QR 카드">
         </div>
         <div class="field">
+          <label style="cursor:pointer">
+            <input type="checkbox" id="qr-no-attach" style="vertical-align:middle;margin-right:6px">
+            <span style="vertical-align:middle">QR 없이 본문만 발송 (휴대폰 번호 11자리로 체크인 안내)</span>
+          </label>
+        </div>
+        <div class="field">
           <label>본문 (비워두면 기본 템플릿 / {{name}}, {{eventName}}, {{dates}} 사용 가능)</label>
           <textarea id="qr-body" rows="6" placeholder="비워두면 기본 안내문 사용"></textarea>
         </div>
@@ -1793,6 +1799,7 @@ function sendQrEmailNow() {
   const eventId = document.getElementById('qr-event').value;
   const subject = document.getElementById('qr-subject').value.trim();
   const body = document.getElementById('qr-body').value.trim();
+  const noQr = document.getElementById('qr-no-attach').checked;
   const memberIds = Array.from(document.querySelectorAll('.qr-mid:checked')).map(el => el.value);
   const filterGroup = (document.getElementById('qr-filter-group').value || '').trim();
   const baseList = state.roster.filter(m => {
@@ -1804,14 +1811,19 @@ function sendQrEmailNow() {
     ? state.roster.filter(m => memberIds.indexOf(m.memberId) >= 0)
     : baseList;
   if (targets.length === 0) { alert('대상 위원이 없습니다.'); return; }
-  if (!confirm(`${targets.length}명에게 발송하시겠습니까?`)) return;
+  const confirmMsg = noQr
+    ? `${targets.length}명에게 QR 없이 본문만 발송하시겠습니까?`
+    : `${targets.length}명에게 QR 카드 메일을 발송하시겠습니까?`;
+  if (!confirm(confirmMsg)) return;
 
-  // QR PNG 생성 (각 위원 ID로)
+  // QR PNG 생성 (각 위원 ID로) — noQr 모드에서는 생략
   const qrPngs = {};
-  targets.forEach(m => {
-    if (!m.memberId) return;
-    qrPngs[m.memberId] = makeQrPngDataUri(m.memberId);
-  });
+  if (!noQr) {
+    targets.forEach(m => {
+      if (!m.memberId) return;
+      qrPngs[m.memberId] = makeQrPngDataUri(m.memberId);
+    });
+  }
 
   document.getElementById('qr-send-msg').innerHTML = '<div class="alert alert-info">전송 중… 잠시만 기다려 주세요.</div>';
   callApi('sendQrEmail', {
@@ -1820,7 +1832,8 @@ function sendQrEmailNow() {
     memberIds: JSON.stringify(memberIds),
     qrPngs: JSON.stringify(qrPngs),
     subject: subject,
-    bodyTemplate: body
+    bodyTemplate: body,
+    noQr: noQr ? '1' : ''
   }).then(res => {
     if (!res.ok) {
       document.getElementById('qr-send-msg').innerHTML = `<div class="alert alert-error">${escapeHtml(res.error)}</div>`;
