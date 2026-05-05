@@ -142,6 +142,34 @@ body { font-size: 15px; line-height: 1.5; }
 .modal h3 { margin: 0 0 14px; color: var(--gachon-navy); font-size: 18px; }
 .hidden { display: none !important; }
 
+/* 로딩 인디케이터 (전역) */
+.loading-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(255,255,255,0.55);
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: all;
+}
+.loading-card {
+  background: #fff; border-radius: 12px; padding: 22px 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  display: flex; align-items: center; gap: 14px;
+  border: 1px solid var(--line);
+}
+.loading-spinner {
+  width: 32px; height: 32px;
+  border: 4px solid #e6eaf2;
+  border-top-color: var(--gachon-navy);
+  border-radius: 50%;
+  animation: loading-spin 0.85s linear infinite;
+}
+.loading-text { color: var(--gachon-navy); font-weight: 600; font-size: 15px; }
+@keyframes loading-spin {
+  to { transform: rotate(360deg); }
+}
+@media print {
+  .loading-overlay { display: none !important; }
+}
+
 /* 셀프 체크인 결과 */
 .checkin-result {
   text-align: center; padding: 30px 16px;
@@ -256,6 +284,14 @@ body { font-size: 15px; line-height: 1.5; }
 </style>
 </head>
 <body>
+
+<!-- 전역 로딩 오버레이 (callApi 호출 중 표시) -->
+<div id="loading-overlay" class="loading-overlay hidden" aria-live="polite" aria-busy="true">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">처리 중…</div>
+  </div>
+</div>
 
 <!-- ============================================================
      #checkin — 셀프 체크인 (행사 선택 → 본인인증 → 서명)
@@ -397,7 +433,7 @@ body { font-size: 15px; line-height: 1.5; }
     <h2>관리자 로그인</h2>
     <div class="field">
       <label>비밀번호</label>
-      <input id="admin-pw" type="password" autocomplete="current-password">
+      <input id="admin-pw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter'){event.preventDefault();adminLogin();}">
     </div>
     <button class="btn btn-block" onclick="adminLogin()">로그인</button>
     <div id="admin-login-msg" style="margin-top: 10px"></div>
@@ -473,8 +509,8 @@ body { font-size: 15px; line-height: 1.5; }
             <select id="sb-event" onchange="sbOnEventChange()"><option value="">— 선택 —</option></select>
           </div>
           <div class="col">
-            <label class="muted">날짜 (전체 또는 단일)</label>
-            <select id="sb-date"><option value="">— 행사 먼저 선택 —</option></select>
+            <label class="muted">날짜 (체크한 날짜만 컬럼으로 출력)</label>
+            <div id="sb-date-list" class="muted" style="padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;min-height:38px;line-height:1.9">— 행사 먼저 선택 —</div>
           </div>
           <div class="col">
             <label class="muted">출력 모드</label>
@@ -659,7 +695,7 @@ body { font-size: 15px; line-height: 1.5; }
   <div id="print-login" class="app">
     <div class="header"><div><h1>QR 카드 인쇄</h1><div class="sub">관리자 비밀번호 필요</div></div></div>
     <div class="card" style="max-width: 420px">
-      <div class="field"><label>비밀번호</label><input id="print-pw" type="password"></div>
+      <div class="field"><label>비밀번호</label><input id="print-pw" type="password" onkeydown="if(event.key==='Enter'){event.preventDefault();printLogin();}"></div>
       <button class="btn btn-block" onclick="printLogin()">로그인</button>
       <div id="print-login-msg" style="margin-top: 10px"></div>
     </div>
@@ -712,6 +748,50 @@ const state = {
 // ================================================================
 // API 호출 헬퍼 (모든 요청 GET, x-www-form-urlencoded)
 // ================================================================
+let _loadingCount = 0;
+function showLoading(label) {
+  _loadingCount++;
+  const ov = document.getElementById('loading-overlay');
+  const tx = document.getElementById('loading-text');
+  if (tx) tx.textContent = label || '처리 중…';
+  if (ov) ov.classList.remove('hidden');
+}
+function hideLoading() {
+  _loadingCount = Math.max(0, _loadingCount - 1);
+  if (_loadingCount === 0) {
+    const ov = document.getElementById('loading-overlay');
+    if (ov) ov.classList.add('hidden');
+  }
+}
+
+// 액션별 한국어 라벨 (오버레이 텍스트)
+const _ACTION_LABEL = {
+  ping: '연결 확인 중…',
+  listEvents: '행사 목록 불러오는 중…',
+  listEventsAdmin: '행사 목록 불러오는 중…',
+  lookup: '본인 확인 중…',
+  submitSign: '서명 저장 중…',
+  getRoster: '명단 불러오는 중…',
+  addMember: '위원 추가 중…',
+  updateMember: '위원 수정 중…',
+  toggleActive: '활성/비활성 변경 중…',
+  bulkImportRoster: '명단 일괄 등록 중…',
+  assignTokens: 'ID 일괄 부여 중…',
+  createEvent: '행사 생성 중…',
+  updateEvent: '행사 수정 중…',
+  deleteEvent: '행사 삭제 중…',
+  setExpected: '참석 예정자 저장 중…',
+  getEventDetail: '행사 상세 불러오는 중…',
+  getAttendance: '출석기록 불러오는 중…',
+  getNoShows: '미참석자 불러오는 중…',
+  deleteAttendance: '출석기록 삭제 중…',
+  sendQrEmail: '메일 발송 중…',
+  sendNoShowAlert: '알림 메일 발송 중…',
+  getGroups: '그룹 불러오는 중…',
+  addGroup: '그룹 추가 중…',
+  deleteGroup: '그룹 삭제 중…'
+};
+
 function callApi(action, params, opts) {
   opts = opts || {};
   const body = new URLSearchParams();
@@ -723,7 +803,11 @@ function callApi(action, params, opts) {
     body: body.toString(),
     redirect: 'follow'
   };
-  return fetch(SCRIPT_URL, init).then(r => r.json());
+  const silent = !!opts.silent;
+  if (!silent) showLoading(opts.loadingText || _ACTION_LABEL[action] || '처리 중…');
+  return fetch(SCRIPT_URL, init)
+    .then(r => r.json())
+    .finally(() => { if (!silent) hideLoading(); });
 }
 
 function escapeHtml(s) {
@@ -1672,22 +1756,45 @@ function sendNoShowMail() {
 function sbOnEventChange() {
   const eventId = document.getElementById('sb-event').value;
   const ev = state.eventsAdmin.find(e => e.eventId === eventId);
-  const sel = document.getElementById('sb-date');
-  if (!ev) { sel.innerHTML = '<option value="">— 행사 먼저 선택 —</option>'; return; }
-  let html = '<option value="">전체 (모든 날짜를 컬럼으로)</option>';
-  (ev.dates || []).forEach(d => { html += `<option value="${d}">${d}</option>`; });
-  sel.innerHTML = html;
+  const wrap = document.getElementById('sb-date-list');
+  if (!ev) { wrap.innerHTML = '— 행사 먼저 선택 —'; return; }
+  const dates = ev.dates || [];
+  if (dates.length === 0) { wrap.innerHTML = '<span class="muted">행사에 등록된 날짜가 없습니다.</span>'; return; }
+  let html = `<label style="display:inline-block;margin-right:14px;cursor:pointer">
+    <input type="checkbox" id="sb-date-all" onchange="sbDateToggleAll(this.checked)" checked style="vertical-align:middle;margin-right:4px">
+    <b style="vertical-align:middle;color:#222">전체</b>
+  </label>`;
+  dates.forEach(d => {
+    const dt = new Date(d);
+    const wk = ['일','월','화','수','목','금','토'][dt.getDay()];
+    html += `<label style="display:inline-block;margin-right:14px;cursor:pointer">
+      <input type="checkbox" class="sb-date-chk" value="${d}" checked onchange="sbDateSyncMaster()" style="vertical-align:middle;margin-right:4px">
+      <span style="vertical-align:middle;color:#222">${escapeHtml(d.substring(5))}(${wk})</span>
+    </label>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function sbDateToggleAll(v) {
+  document.querySelectorAll('.sb-date-chk').forEach(el => el.checked = v);
+}
+
+function sbDateSyncMaster() {
+  const all = document.querySelectorAll('.sb-date-chk');
+  const checked = document.querySelectorAll('.sb-date-chk:checked');
+  const master = document.getElementById('sb-date-all');
+  if (master) master.checked = all.length > 0 && all.length === checked.length;
 }
 
 function sbPreview() {
   const eventId = document.getElementById('sb-event').value;
-  const date = document.getElementById('sb-date').value;
   const mode = document.getElementById('sb-mode').value;
   if (!eventId) return alert('행사를 선택하세요.');
   const ev = state.eventsAdmin.find(e => e.eventId === eventId);
   if (!ev) return;
 
-  const dates = date ? [date] : (ev.dates || []);
+  const dates = Array.from(document.querySelectorAll('.sb-date-chk:checked')).map(el => el.value);
+  if (dates.length === 0) return alert('출력할 날짜를 1개 이상 선택해 주세요.');
   callApi('getEventDetail', { pw: state.adminPw, eventId: eventId }).then(res => {
     if (!res.ok) return alert(res.error);
     const opts = res.event.formOpts || {};
