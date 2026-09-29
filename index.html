@@ -340,7 +340,7 @@ body { font-size: 15px; line-height: 1.5; }
       <h2>✓ 출석 완료</h2>
       <div class="name" id="ck-done-name"></div>
       <div class="time" id="ck-done-time"></div>
-      <div style="margin-top:14px;font-size:13px;color:var(--text-muted)">3초 후 처음으로 돌아갑니다.</div>
+      <div style="margin-top:14px;font-size:13px;color:var(--text-muted)">3초 후 다음 분 본인 인증 화면으로 돌아갑니다.</div>
     </div>
   </div>
 </div>
@@ -924,6 +924,7 @@ function ckBackToAuth() {
   document.getElementById('ck-step-sign').classList.add('hidden');
   document.getElementById('ck-step-auth').classList.remove('hidden');
   document.getElementById('ck-sign-msg').innerHTML = '';
+  clearSignatureCanvas('ck-canvas');
 }
 
 function ckLookup() {
@@ -942,7 +943,9 @@ function ckLookup() {
       `<br><span class="muted">${escapeHtml(res.member.phoneMasked || '')}</span>`;
     document.getElementById('ck-step-auth').classList.add('hidden');
     document.getElementById('ck-step-sign').classList.remove('hidden');
+    document.getElementById('ck-sign-msg').innerHTML = '';
     setupSignatureCanvas('ck-canvas');
+    clearSignatureCanvas('ck-canvas');   // 이전 위원의 서명이 남지 않도록 매번 초기화
   });
 }
 
@@ -963,8 +966,23 @@ function ckSubmit() {
     document.getElementById('ck-step-done').classList.remove('hidden');
     document.getElementById('ck-done-name').textContent = res.name + '님';
     document.getElementById('ck-done-time').textContent = res.time + ' 체크인 완료';
-    setTimeout(ckResetAll, 3000);
+    clearSignatureCanvas('ck-canvas');
+    setTimeout(ckNextPerson, 3000);   // 행사는 유지하고 본인 인증 단계로 복귀
   });
+}
+
+// 제출 완료 후 — 선택한 행사·날짜는 유지하고 다음 위원 인증 화면으로
+function ckNextPerson() {
+  state.ck.member = null;
+  state.ck.signed = false;
+  document.getElementById('ck-step-done').classList.add('hidden');
+  document.getElementById('ck-step-sign').classList.add('hidden');
+  document.getElementById('ck-step-event').classList.add('hidden');
+  document.getElementById('ck-step-auth').classList.remove('hidden');
+  const k = document.getElementById('ck-key'); if (k) { k.value = ''; k.focus(); }
+  document.getElementById('ck-auth-msg').innerHTML = '';
+  document.getElementById('ck-sign-msg').innerHTML = '';
+  clearSignatureCanvas('ck-canvas');
 }
 
 function ckResetAll() {
