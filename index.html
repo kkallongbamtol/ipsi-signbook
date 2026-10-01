@@ -493,6 +493,10 @@ body { font-size: 15px; line-height: 1.5; }
             <select id="attend-date" onchange="loadAttendance()"><option value="">— 행사 먼저 선택 —</option></select>
           </div>
         </div>
+        <div class="btn-row" style="margin-top: 10px; align-items: center">
+          <button class="btn btn-sm" onclick="refreshAttendance()">⟳ 새로고침</button>
+          <span class="muted" id="attend-updated"></span>
+        </div>
       </div>
       <div class="card">
         <div id="attend-summary" class="muted">행사·날짜를 선택하세요.</div>
@@ -824,6 +828,18 @@ function maskPhone(p) {
   const s = normalizePhone(p);
   if (s.length !== 11) return s;
   return s.substring(0,3) + '-****-' + s.substring(7);
+}
+// 관리자 화면 전용 — 마스킹 없이 010-1234-5678 형식으로 표시
+function formatPhone(p) {
+  const s = normalizePhone(p);
+  if (s.length !== 11) return s;
+  return s.substring(0,3) + '-' + s.substring(3,7) + '-' + s.substring(7);
+}
+// 관리자 화면 전용 — 탭하면 바로 전화 연결되는 링크
+function phoneLink(p) {
+  const s = normalizePhone(p);
+  if (!s) return '';
+  return `<a href="tel:${s}" style="color:inherit;white-space:nowrap">${escapeHtml(formatPhone(s))}</a>`;
 }
 function todayStr() {
   const d = new Date();
@@ -1361,10 +1377,11 @@ function renderRoster() {
   const wrap = document.getElementById('roster-table-wrap');
   let rows = state.roster;
   if (q) {
+    const qDigits = q.replace(/\D/g, '');
     rows = rows.filter(m =>
       m.name.toLowerCase().includes(q) ||
       (m.dept || '').toLowerCase().includes(q) ||
-      (m.phone || '').includes(q.replace(/\D/g, '')) ||
+      (qDigits && (m.phone || '').includes(qDigits)) ||
       (m.groups || []).some(g => g.toLowerCase().includes(q)));
   }
   if (filterGroup) {
@@ -1382,7 +1399,7 @@ function renderRoster() {
       <td>${escapeHtml(m.dept || '')}</td>
       <td>${escapeHtml(m.position || '')}</td>
       <td>${groupTags}</td>
-      <td>${escapeHtml(maskPhone(m.phone))}</td>
+      <td>${phoneLink(m.phone)}</td>
       <td>${escapeHtml(m.email || '')}</td>
       <td><span class="tag tag-${m.active ? 'active' : 'inactive'}">${m.active ? '활성' : '비활성'}</span></td>
       <td>
@@ -1711,6 +1728,10 @@ function loadAttendance() {
       document.getElementById('attend-tables').innerHTML = `<div class="alert alert-error">${escapeHtml(att.error || no.error)}</div>`;
       return;
     }
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    document.getElementById('attend-updated').textContent =
+      `마지막 갱신 ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     const total = (att.list.length + no.list.length);
     document.getElementById('attend-summary').innerHTML =
       `<b>${escapeHtml(date)}</b> · 예정 ${total}명 / 출석 <b style="color:var(--success)">${att.list.length}</b>명 / 미참석 <b style="color:var(--error)">${no.list.length}</b>명`;
@@ -1741,7 +1762,7 @@ function loadAttendance() {
           <td><b>${escapeHtml(m.name)}</b></td>
           <td>${escapeHtml(m.dept || '')}</td>
           <td>${escapeHtml(m.position || '')}</td>
-          <td>${escapeHtml(maskPhone(m.phone))}</td>
+          <td>${phoneLink(m.phone)}</td>
           <td>${escapeHtml(m.email || '')}</td>
         </tr>`;
       });
@@ -1752,6 +1773,14 @@ function loadAttendance() {
     }
     document.getElementById('attend-tables').innerHTML = html;
   });
+}
+
+// 출석 현황 새로고침 — 선택된 행사·날짜 그대로 출석/미참석 재조회
+function refreshAttendance() {
+  const eventId = document.getElementById('attend-event').value;
+  const date = document.getElementById('attend-date').value;
+  if (!eventId || !date) { alert('행사·날짜를 먼저 선택해 주세요.'); return; }
+  loadAttendance();
 }
 
 function deleteAttRow(memberId, name) {
