@@ -270,6 +270,10 @@ body { font-size: 15px; line-height: 1.5; }
 @media print {
   body { background: #fff !important; }
   .no-print { display: none !important; }
+  /* 관리자 화면 인쇄 시 상단 헤더(제목·로그아웃)와 탭 메뉴 숨김 */
+  #app-admin > .header,
+  #admin-content > .tabs { display: none !important; }
+  .app-wide { padding: 0 !important; max-width: none !important; }
   .signbook-page { box-shadow: none !important; margin: 0 !important; padding: 8mm 8mm !important; page-break-after: always; }
   .print-page { page-break-after: always; }
 }
